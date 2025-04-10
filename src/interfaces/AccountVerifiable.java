@@ -1,4 +1,4 @@
-package BankInterface;
+package interfaces;
 
 public interface AccountVerifiable {
   boolean verifyAccountDetails();

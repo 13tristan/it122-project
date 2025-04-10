@@ -1,0 +1,6 @@
+accountNumber,fname,balance,accountExists
+10001,John,5000,true
+10002,Jane,10000,true
+10003,Bob,0,false
+10004,Alice,3000,true
+10005,Charlie,1500,false

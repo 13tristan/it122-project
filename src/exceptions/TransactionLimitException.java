@@ -1,4 +1,4 @@
-package BankAccountCustomException;
+package exceptions;
 
 public class TransactionLimitException extends GlobalExceptionHandler {
   public TransactionLimitException(String message) {

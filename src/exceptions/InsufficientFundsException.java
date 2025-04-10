@@ -1,4 +1,4 @@
-package BankAccountCustomException;
+package exceptions;
 
 public class InsufficientFundsException extends GlobalExceptionHandler {
 

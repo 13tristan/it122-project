@@ -1,26 +1,30 @@
-import BankAccountCustomException.GlobalExceptionHandler;
-import BankAccountCustomException.InsufficientFundsException;
-import BankAccountCustomException.InvalidAccountException;
-import BankAccountCustomException.InvalidAmountException;
+package models;
+
+import exceptions.GlobalExceptionHandler;
+import exceptions.InsufficientFundsException;
+import exceptions.InvalidAmountException;
 
 import java.util.Random;
 
-public class BankAccount_Model {
+public class BankAccount {
 
   Random random = new Random();
 
 
-  int accountNumber, balance;
-  String fname, lname;
-  boolean accountExists;
+  private int accountNumber, balance;
+  private String name;
+  private boolean accountExists;
 
 
-  public String getName() {
-    return fname;
+  public BankAccount(String name, int balance, int accountNumber,boolean accountExists) {
+    this.accountExists = accountExists;
+    this.name = name;
+    this.balance = balance;
+    this.accountNumber = accountNumber;
   }
 
-  public String getLname() {
-    return lname;
+  public String getName() {
+    return name;
   }
 
   public int getBalance() {
@@ -38,7 +42,7 @@ public class BankAccount_Model {
 
   public void deposit(int amount) throws GlobalExceptionHandler{
 
-    if (amount < 0) {
+    if (amount < 0 && !accountExists) {
       throw new InvalidAmountException("Invalid amount");
     }
 
@@ -48,7 +52,7 @@ public class BankAccount_Model {
 
   public void withdraw(int amount) throws GlobalExceptionHandler {
 
-    if (amount < balance && !accountExists) {
+    if (amount < balance) {
       throw new InsufficientFundsException("Insufficient funds");
     }
 
