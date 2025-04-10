@@ -15,8 +15,12 @@ public class BankAccount {
   private String name;
   private boolean accountExists;
 
+  public BankAccount(String name, int accountNumber) {
+    this.accountNumber = accountNumber;
+    this.name = name;
+  }
 
-  public BankAccount(String name, int balance, int accountNumber,boolean accountExists) {
+  public BankAccount(String name, int balance, int accountNumber, boolean accountExists) {
     this.accountExists = accountExists;
     this.name = name;
     this.balance = balance;
