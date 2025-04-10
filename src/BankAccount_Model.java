@@ -56,7 +56,7 @@ public class BankAccount_Model {
       }
 
       if (amount < 0) {
-        throw new InvalidAccountException("Invalid amount");
+        throw new InvalidAmountException("Invalid amount");
       }
 
       //if amount to be withdrawn is valid
