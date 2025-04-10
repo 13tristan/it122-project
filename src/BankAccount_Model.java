@@ -1,3 +1,4 @@
+import BankAccountCustomException.GlobalExceptionHandler;
 import BankAccountCustomException.InsufficientFundsException;
 import BankAccountCustomException.InvalidAccountException;
 import BankAccountCustomException.InvalidAmountException;
@@ -35,33 +36,27 @@ public class BankAccount_Model {
     return random.nextInt(100000);
   }
 
-  public void deposit(int amount) {
-    try {
-      if (amount < 0) {
-        throw new InvalidAmountException("Invalid amount");
-      }
+  public void deposit(int amount) throws GlobalExceptionHandler{
 
-      //if amount to be deposited is valid
-      balance += amount;
-
+    if (amount < 0) {
+      throw new InvalidAmountException("Invalid amount");
     }
-    catch (Exception e) {}
+
+    //if amount to be deposited is valid
+    balance += amount;
   }
 
-  public void withdraw(int amount) {
-    try {
+  public void withdraw(int amount) throws GlobalExceptionHandler {
 
-      if (amount < balance && !accountExists) {
-        throw new InsufficientFundsException("Insufficient funds");
-      }
-
-      if (amount < 0) {
-        throw new InvalidAmountException("Invalid amount");
-      }
-
-      //if amount to be withdrawn is valid
-      balance -= amount;
+    if (amount < balance && !accountExists) {
+      throw new InsufficientFundsException("Insufficient funds");
     }
-    catch (Exception e) {}
+
+    if (amount < 0) {
+      throw new InvalidAmountException("Invalid amount");
+    }
+
+    //if amount to be withdrawn is valid
+    balance -= amount;
   }
 }
