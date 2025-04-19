@@ -34,7 +34,7 @@ public class GUI extends JFrame{
     panel.setPreferredSize(new Dimension(1000, 600));
 
     JPanel panelLeft = new JPanel();
-    panelLeft.setBackground(new Color(46, 12, 191));
+    panelLeft.setBackground(new Color(13, 161, 204));
     panelLeft.setPreferredSize(new Dimension(300, 600));
 
 
@@ -110,7 +110,7 @@ public class GUI extends JFrame{
     JButton loginBtn = new JButton("Log In");
     loginBtn.setPreferredSize(new Dimension(100, 40));
     loginBtn.setFont(new Font("Arial", Font.BOLD, 16));
-    loginBtn.setBackground(new Color(46, 12, 191));
+    loginBtn.setBackground(new Color(13, 161, 204));
     loginBtn.setForeground(new Color(255, 255, 255));
     loginBtnPanel.add(loginBtn);
     loginBtn.addActionListener(e -> {
@@ -142,7 +142,7 @@ public class GUI extends JFrame{
     panel.setPreferredSize(new Dimension(1000, 600));
 
     JPanel panelLeft = new JPanel();
-    panelLeft.setBackground(new Color(46, 12, 191));
+    panelLeft.setBackground(new Color(13, 161, 204));
     panelLeft.setPreferredSize(new Dimension(300, 600));
 
 
@@ -213,7 +213,7 @@ public class GUI extends JFrame{
     JButton signInBtn = new JButton("Sign In");
     signInBtn.setPreferredSize(new Dimension(100, 40));
     signInBtn.setFont(new Font("Arial", Font.BOLD, 16));
-    signInBtn.setBackground(new Color(46, 12, 191));
+    signInBtn.setBackground(new Color(13, 161, 204));
     signInBtn.setForeground(new Color(255, 255, 255));
     signInPanel.add(signInBtn);
     signInBtn.addActionListener(e -> {
@@ -243,7 +243,7 @@ public class GUI extends JFrame{
     panel.setPreferredSize(new Dimension(1000, 600));
 
     JPanel panelLeft = new JPanel();
-    panelLeft.setBackground(new Color(46, 12, 191));
+    panelLeft.setBackground(new Color(13, 161, 204));
     panelLeft.setPreferredSize(new Dimension(300, 600));
 
 
@@ -273,7 +273,32 @@ public class GUI extends JFrame{
       mainLayout.show(main, "LOG IN");
     });
 
+    JPanel panelRight = new JPanel(new BorderLayout());
+    panelRight.setSize(new Dimension(700, 600));
+    panelRight.setBackground(new Color(161, 159, 159));
+    panelRight.setBorder(BorderFactory.createEmptyBorder(30,0,30,0));
+
+    JPanel insidePanelRight = new JPanel(new GridLayout());
+    insidePanelRight.setSize(new Dimension(700, 600));
+    insidePanelRight.setBackground(new Color(255, 255, 255));
+    insidePanelRight.setAlignmentX(Component.CENTER_ALIGNMENT);
+    insidePanelRight.setAlignmentY(Component.CENTER_ALIGNMENT);
+    panelRight.add(insidePanelRight);
+
+    JPanel greetingsPanel = new JPanel();
+    greetingsPanel.setBackground(new Color(232, 232, 232));
+    greetingsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    JLabel greetings = new JLabel("Welcome Admin");
+    greetingsPanel.add(greetings);
+
+    JPanel greetingsPanel = new JPanel();
+
+
+
+
+
     panel.add(panelLeft, BorderLayout.WEST);
+    panel.add(panelRight, BorderLayout.CENTER);
 
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
@@ -281,6 +306,9 @@ public class GUI extends JFrame{
     panelLeft.add(manageUsersBtn);
     panelLeft.add(addUsersBtn);
     panelLeft.add(logOutBtn);
+
+    insidePanelRight.add(greetingsPanel);
+
     return panel;
   }
 
