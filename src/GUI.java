@@ -18,9 +18,11 @@ public class GUI extends JFrame{
     main = new JPanel(mainLayout);
 
     JPanel loginPage = createLoginPage();
+    JPanel signUpPage = createSignUpPage();
     JPanel homePage = createHomepage();
 
     main.add(loginPage, "LOG IN");
+    main.add(signUpPage, "SIGN UP");
     main.add(homePage, "HOME");
 
     add(main);
@@ -37,7 +39,7 @@ public class GUI extends JFrame{
 
 
     JLabel bankTitle = new JLabel("BANK NAME");
-    bankTitle.setBorder(BorderFactory.createEmptyBorder(250, 0, 0, 0));
+    bankTitle.setBorder(BorderFactory.createEmptyBorder(130, 0, 0, 0));
     bankTitle.setForeground(new Color(235, 241, 238));
     bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
     bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -45,21 +47,19 @@ public class GUI extends JFrame{
     JLabel bankSubtitle = new JLabel("Number One Bank");
     bankSubtitle.setForeground(new Color(235, 241, 238));
     bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 100, 0));
+    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 130, 0));
 
-    /**JButton signUpBtn = new JButton("Create Account");
-     signUpBtn.setPreferredSize(new Dimension(300, 100));
-     signUpBtn.setFont(new Font("Arial", Font.BOLD, 18));
+    JButton signUpBtn = new JButton("Create Account");
+    signUpBtn.setPreferredSize(new Dimension(300, 80));
+    signUpBtn.setFont(new Font("Arial", Font.BOLD, 18));
+    signUpBtn.addActionListener(e -> {
+      mainLayout.show(main, "SIGN UP");});
 
-     signUpBtn.addActionListener(e -> {
-     mainLayout.show(main, "SIGN UP");
-     });
+    JButton exitBtn = new JButton("Exit");
+    exitBtn.setPreferredSize(new Dimension(300, 80));
+    exitBtn.setFont(new Font("Arial", Font.BOLD, 18));
 
-     JButton exitBtn = new JButton("Exit");
-     exitBtn.setPreferredSize(new Dimension(300, 80));
-     exitBtn.setFont(new Font("Arial", Font.BOLD, 18));
-
-     exitBtn.addActionListener(e -> System.exit(0)); **/
+    exitBtn.addActionListener(e -> System.exit(0));
 
     JPanel panelRight = new JPanel();
     panelRight.setSize(new Dimension(700, 600));
@@ -110,6 +110,8 @@ public class GUI extends JFrame{
     JButton loginBtn = new JButton("Log In");
     loginBtn.setPreferredSize(new Dimension(100, 40));
     loginBtn.setFont(new Font("Arial", Font.BOLD, 16));
+    loginBtn.setBackground(new Color(46, 12, 191));
+    loginBtn.setForeground(new Color(255, 255, 255));
     loginBtnPanel.add(loginBtn);
     loginBtn.addActionListener(e -> {
       mainLayout.show(main, "HOME");
@@ -122,8 +124,8 @@ public class GUI extends JFrame{
 
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
-    //panelLeft.add(signUpBtn);
-    //panelLeft.add(exitBtn);
+    panelLeft.add(signUpBtn);
+    panelLeft.add(exitBtn);
 
     panelRight.add(greeting);
     panelRight.add(accountNumber);
@@ -131,6 +133,107 @@ public class GUI extends JFrame{
     panelRight.add(accountPasswd);
     panelRight.add(accPassPanel);
     panelRight.add(loginBtnPanel);
+    return panel;
+  }
+
+  //CREATING ACCOUNT
+  private JPanel createSignUpPage(){
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setPreferredSize(new Dimension(1000, 600));
+
+    JPanel panelLeft = new JPanel();
+    panelLeft.setBackground(new Color(46, 12, 191));
+    panelLeft.setPreferredSize(new Dimension(300, 600));
+
+
+    JLabel bankTitle = new JLabel("BANK NAME");
+    bankTitle.setBorder(BorderFactory.createEmptyBorder(130, 0, 0, 0));
+    bankTitle.setForeground(new Color(235, 241, 238));
+    bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
+    bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    JLabel bankSubtitle = new JLabel("Number One Bank");
+    bankSubtitle.setForeground(new Color(235, 241, 238));
+    bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 130, 0));
+
+    JButton backBtn = new JButton("Back");
+    backBtn.setFont(new Font("Arial", Font.BOLD, 16));
+    backBtn.setPreferredSize(new Dimension(300, 80));
+    backBtn.addActionListener(e -> {
+      mainLayout.show(main, "LOG IN");
+    });
+
+    JPanel panelRight = new JPanel();
+    panelRight.setSize(new Dimension(700, 600));
+    panelRight.setBackground(new Color(255, 255, 255));
+    panelRight.setBorder(BorderFactory.createEmptyBorder(50, 10, 200, 10));
+    panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
+
+    JLabel greeting = new JLabel("Create Account");
+    greeting.setFont(new Font("Arial", Font.BOLD, 36));
+    greeting.setAlignmentX(CENTER_ALIGNMENT);
+
+    //USERNAME
+    JLabel accountNumber = new JLabel("USERNAME:");
+    accountNumber.setFont(new Font("Arial", Font.BOLD, 18));
+    accountNumber.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 200));
+
+
+    JPanel accNumPanel = new JPanel();
+    accNumPanel.setBackground(new Color(255, 255, 255));
+    accNumPanel.setPreferredSize(new Dimension(700, 50));
+    accNumPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0 ,50));
+
+    //USERNAME TEXTFIELD
+    JTextField inputAccNumber = new JTextField(20);
+    inputAccNumber.setFont(new Font("Arial", Font.PLAIN, 18));
+    accNumPanel.add(inputAccNumber);
+
+
+
+    JLabel accountPasswd = new JLabel("PASSWORD:");
+    accountPasswd.setFont(new Font("Arial", Font.BOLD, 18));
+    accountPasswd.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 323));
+
+    JPanel accPassPanel = new JPanel();
+    accPassPanel.setBackground(new Color(255, 255, 255));
+    accPassPanel.setSize(new Dimension(700, 90));
+    accPassPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20 ,50));
+
+    JTextField inputAccPasswd= new JTextField(20);
+    inputAccPasswd.setFont(new Font("Arial", Font.PLAIN, 18));
+    accPassPanel.add(inputAccPasswd);
+
+    JPanel signInPanel = new JPanel();
+    signInPanel.setBackground(new Color(255, 255, 255));
+    signInPanel.setSize(new Dimension(700, 90));
+    signInPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20 ,50));
+
+    JButton signInBtn = new JButton("Sign In");
+    signInBtn.setPreferredSize(new Dimension(100, 40));
+    signInBtn.setFont(new Font("Arial", Font.BOLD, 16));
+    signInBtn.setBackground(new Color(46, 12, 191));
+    signInBtn.setForeground(new Color(255, 255, 255));
+    signInPanel.add(signInBtn);
+    signInBtn.addActionListener(e -> {
+      mainLayout.show(main, "HOME");
+    });
+
+    panel.add(panelLeft, BorderLayout.WEST);
+    panel.add(panelRight,BorderLayout.CENTER);
+
+    panelLeft.add(bankTitle);
+    panelLeft.add(bankSubtitle);
+    panelLeft.add(backBtn);
+
+    panelRight.add(greeting);
+    panelRight.add(accountNumber);
+    panelRight.add(accNumPanel);
+    panelRight.add(accountPasswd);
+    panelRight.add(accPassPanel);
+    panelRight.add(signInPanel);
+
     return panel;
   }
 
