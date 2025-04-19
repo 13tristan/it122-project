@@ -4,68 +4,181 @@ import java.awt.event.*;
 import java.io.*;
 import models.BankAccount;
 
-public class GUI {
-  JFrame frame = new JFrame("Admin Dashboard");
-
-  // Buttons for the navigation
-  JButton btnHome = new JButton("Home");
-  JButton btnUsers = new JButton("Manage Users");
-  JButton btnAddUser = new JButton("Add Users");
-  JButton btnLogout = new JButton("Logout");
-
-  // Panels
-  JPanel homePanel = new JPanel();
-  JPanel contentPanel = new JPanel();
-  JPanel navPanel = new JPanel();
-  JPanel panel = new JPanel();
+public class GUI extends JFrame{
+  private JPanel main;
+  private CardLayout mainLayout;
 
   public GUI() {
-    // Set up the main window (JFrame)
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setSize(800, 600);
-    frame.setLocationRelativeTo(null); // Center the window
+    setTitle("BANK");
+    setSize(new Dimension(1000, 600));
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
+    setVisible(true);
 
-    panel.setLayout(new BorderLayout());
+    mainLayout = new CardLayout();
+    main = new JPanel(mainLayout);
 
-    // Create a navigation panel with buttons (like a sidebar)
-    navPanel.setLayout(new GridLayout(0, 1));
-    navPanel.setBackground(new Color(45, 45, 45)); // Dark background for sidebar
-    navPanel.setPreferredSize(new Dimension(200, 600));
+    JPanel loginPage = createLoginPage();
+    JPanel homePage = createHomepage();
 
-    // Set button properties
-    btnHome.setBackground(new Color(60, 60, 60));
-    btnHome.setForeground(Color.WHITE);
-    btnUsers.setBackground(new Color(60, 60, 60));
-    btnUsers.setForeground(Color.WHITE);
-    btnAddUser.setBackground(new Color(60, 60, 60));
-    btnAddUser.setForeground(Color.WHITE);
-    btnLogout.setBackground(new Color(60, 60, 60));
-    btnLogout.setForeground(Color.WHITE);
+    main.add(loginPage, "LOG IN");
+    main.add(homePage, "HOME");
 
-    // Add buttons to the navigation panel
-    navPanel.add(btnHome);
-    navPanel.add(btnUsers);
-    navPanel.add(btnAddUser);
-    navPanel.add(btnLogout);
+    add(main);
+    setLocationRelativeTo(null);
+  }
 
-    // Create a content area for displaying information
-    contentPanel.setLayout(new CardLayout());
+  private JPanel createLoginPage(){
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setPreferredSize(new Dimension(1000, 600));
 
-    // Add a home panel as a placeholder
-    homePanel.setBackground(Color.WHITE);
-    homePanel.add(new JLabel("Welcome to the Admin Dashboard"));
-
-    // Add components to the content panel
-    contentPanel.add(homePanel, "Home");
-
-    // Add the navigation and content panels to the main panel
-    panel.add(navPanel, BorderLayout.WEST);
-    panel.add(contentPanel, BorderLayout.CENTER);
+    JPanel panelLeft = new JPanel();
+    panelLeft.setBackground(new Color(46, 12, 191));
+    panelLeft.setPreferredSize(new Dimension(300, 600));
 
 
-    // Set up the frame
-    frame.add(panel);
-    frame.setVisible(true);
+    JLabel bankTitle = new JLabel("BANK NAME");
+    bankTitle.setBorder(BorderFactory.createEmptyBorder(250, 0, 0, 0));
+    bankTitle.setForeground(new Color(235, 241, 238));
+    bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
+    bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    JLabel bankSubtitle = new JLabel("Number One Bank");
+    bankSubtitle.setForeground(new Color(235, 241, 238));
+    bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 100, 0));
+
+    /**JButton signUpBtn = new JButton("Create Account");
+     signUpBtn.setPreferredSize(new Dimension(300, 100));
+     signUpBtn.setFont(new Font("Arial", Font.BOLD, 18));
+
+     signUpBtn.addActionListener(e -> {
+     mainLayout.show(main, "SIGN UP");
+     });
+
+     JButton exitBtn = new JButton("Exit");
+     exitBtn.setPreferredSize(new Dimension(300, 80));
+     exitBtn.setFont(new Font("Arial", Font.BOLD, 18));
+
+     exitBtn.addActionListener(e -> System.exit(0)); **/
+
+    JPanel panelRight = new JPanel();
+    panelRight.setSize(new Dimension(700, 600));
+    panelRight.setBackground(new Color(255, 255, 255));
+    panelRight.setBorder(BorderFactory.createEmptyBorder(50, 10, 200, 10));
+    panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
+
+    JLabel greeting = new JLabel("Welcome");
+    greeting.setFont(new Font("Arial", Font.BOLD, 36));
+    greeting.setAlignmentX(CENTER_ALIGNMENT);
+
+    //USERNAME
+    JLabel accountNumber = new JLabel("USERNAME:");
+    accountNumber.setFont(new Font("Arial", Font.BOLD, 18));
+    accountNumber.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+
+
+    JPanel accNumPanel = new JPanel();
+    accNumPanel.setBackground(new Color(255, 255, 255));
+    accNumPanel.setPreferredSize(new Dimension(700, 50));
+    accNumPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0 ,50));
+
+    //USERNAME TEXTFIELD
+    JTextField inputAccNumber = new JTextField(20);
+    inputAccNumber.setFont(new Font("Arial", Font.PLAIN, 18));
+    accNumPanel.add(inputAccNumber);
+
+
+
+    JLabel accountPasswd = new JLabel("PASSWORD:");
+    accountPasswd.setFont(new Font("Arial", Font.BOLD, 18));
+    accountPasswd.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 168));
+
+    JPanel accPassPanel = new JPanel();
+    accPassPanel.setBackground(new Color(255, 255, 255));
+    accPassPanel.setSize(new Dimension(700, 90));
+    accPassPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20 ,50));
+
+    JTextField inputAccPasswd= new JTextField(20);
+    inputAccPasswd.setFont(new Font("Arial", Font.PLAIN, 18));
+    accPassPanel.add(inputAccPasswd);
+
+    JPanel loginBtnPanel = new JPanel();
+    loginBtnPanel.setBackground(new Color(255, 255, 255));
+    loginBtnPanel.setSize(new Dimension(700, 90));
+    loginBtnPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20 ,50));
+
+    JButton loginBtn = new JButton("Log In");
+    loginBtn.setPreferredSize(new Dimension(100, 40));
+    loginBtn.setFont(new Font("Arial", Font.BOLD, 16));
+    loginBtnPanel.add(loginBtn);
+    loginBtn.addActionListener(e -> {
+      mainLayout.show(main, "HOME");
+    });
+
+
+
+    panel.add(panelLeft, BorderLayout.WEST);
+    panel.add(panelRight, BorderLayout.CENTER);
+
+    panelLeft.add(bankTitle);
+    panelLeft.add(bankSubtitle);
+    //panelLeft.add(signUpBtn);
+    //panelLeft.add(exitBtn);
+
+    panelRight.add(greeting);
+    panelRight.add(accountNumber);
+    panelRight.add(accNumPanel);
+    panelRight.add(accountPasswd);
+    panelRight.add(accPassPanel);
+    panelRight.add(loginBtnPanel);
+    return panel;
+  }
+
+
+  private JPanel createHomepage(){
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setPreferredSize(new Dimension(1000, 600));
+
+    JPanel panelLeft = new JPanel();
+    panelLeft.setBackground(new Color(46, 12, 191));
+    panelLeft.setPreferredSize(new Dimension(300, 600));
+
+
+    JLabel bankTitle = new JLabel("BANK NAME");
+    bankTitle.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+    bankTitle.setForeground(new Color(235, 241, 238));
+    bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
+    bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    JLabel bankSubtitle = new JLabel("Number One Bank");
+    bankSubtitle.setForeground(new Color(235, 241, 238));
+    bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 100, 0));
+
+    JButton homeBtn = new JButton("Home");
+    homeBtn.setPreferredSize(new Dimension(300, 70));
+
+    JButton manageUsersBtn = new JButton("Manage Users");
+    manageUsersBtn.setPreferredSize(new Dimension(300, 70));
+
+    JButton addUsersBtn = new JButton("Add Users");
+    addUsersBtn.setPreferredSize(new Dimension(300, 70));
+
+    JButton logOutBtn = new JButton("Log Out");
+    logOutBtn.setPreferredSize(new Dimension(300, 70));
+    logOutBtn.addActionListener(e -> {
+      mainLayout.show(main, "LOG IN");
+    });
+
+    panel.add(panelLeft, BorderLayout.WEST);
+
+    panelLeft.add(bankTitle);
+    panelLeft.add(bankSubtitle);
+    panelLeft.add(homeBtn);
+    panelLeft.add(manageUsersBtn);
+    panelLeft.add(addUsersBtn);
+    panelLeft.add(logOutBtn);
+    return panel;
   }
 
 
@@ -76,7 +189,7 @@ public class GUI {
       writer.newLine();
     } catch (IOException e) {
       e.printStackTrace();
-      JOptionPane.showMessageDialog(frame, "Error saving account to CSV!");
+      JOptionPane.showMessageDialog(null, "Error saving account to CSV!");
     }
   }
 
