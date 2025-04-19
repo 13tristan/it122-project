@@ -291,8 +291,6 @@ public class GUI extends JFrame{
     JLabel greetings = new JLabel("Welcome Admin");
     greetingsPanel.add(greetings);
 
-    JPanel greetingsPanel = new JPanel();
-
 
 
 
