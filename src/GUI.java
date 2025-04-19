@@ -20,10 +20,14 @@ public class GUI extends JFrame{
     JPanel loginPage = createLoginPage();
     JPanel signUpPage = createSignUpPage();
     JPanel homePage = createHomepage();
+    JPanel manageAccPage = createManageAccPage();
+    JPanel addAccPage = createAddAccPage();
 
     main.add(loginPage, "LOG IN");
     main.add(signUpPage, "SIGN UP");
     main.add(homePage, "HOME");
+    main.add(manageAccPage, "MANAGE ACCOUNT");
+    main.add(addAccPage, "ADD ACCOUNT");
 
     add(main);
     setLocationRelativeTo(null);
@@ -237,7 +241,6 @@ public class GUI extends JFrame{
     return panel;
   }
 
-
   private JPanel createHomepage(){
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(1000, 600));
@@ -261,11 +264,17 @@ public class GUI extends JFrame{
     JButton homeBtn = new JButton("Home");
     homeBtn.setPreferredSize(new Dimension(300, 70));
 
-    JButton manageUsersBtn = new JButton("Manage Users");
-    manageUsersBtn.setPreferredSize(new Dimension(300, 70));
+    JButton manageAccsBtn = new JButton("Manage Users");
+    manageAccsBtn.setPreferredSize(new Dimension(300, 70));
+    manageAccsBtn.addActionListener(e -> {
+      mainLayout.show(main, "MANAGE ACCOUNT");
+    });
 
-    JButton addUsersBtn = new JButton("Add Users");
-    addUsersBtn.setPreferredSize(new Dimension(300, 70));
+    JButton addAccBtn = new JButton("Add Users");
+    addAccBtn.setPreferredSize(new Dimension(300, 70));
+    addAccBtn.addActionListener(e -> {
+      mainLayout.show(main, "ADD ACCOUNT" );
+    });
 
     JButton logOutBtn = new JButton("Log Out");
     logOutBtn.setPreferredSize(new Dimension(300, 70));
@@ -273,23 +282,38 @@ public class GUI extends JFrame{
       mainLayout.show(main, "LOG IN");
     });
 
-    JPanel panelRight = new JPanel(new BorderLayout());
+    JPanel panelRight = new JPanel();
     panelRight.setSize(new Dimension(700, 600));
     panelRight.setBackground(new Color(161, 159, 159));
     panelRight.setBorder(BorderFactory.createEmptyBorder(30,0,30,0));
+    panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
 
-    JPanel insidePanelRight = new JPanel(new GridLayout());
+    JPanel insidePanelRight = new JPanel();
     insidePanelRight.setSize(new Dimension(700, 600));
     insidePanelRight.setBackground(new Color(255, 255, 255));
     insidePanelRight.setAlignmentX(Component.CENTER_ALIGNMENT);
     insidePanelRight.setAlignmentY(Component.CENTER_ALIGNMENT);
+    insidePanelRight.setLayout(new BoxLayout(insidePanelRight, BoxLayout.Y_AXIS));
     panelRight.add(insidePanelRight);
 
-    JPanel greetingsPanel = new JPanel();
+    JPanel greetingsPanel = new JPanel(new BorderLayout());
     greetingsPanel.setBackground(new Color(232, 232, 232));
-    greetingsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    greetingsPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
     JLabel greetings = new JLabel("Welcome Admin");
-    greetingsPanel.add(greetings);
+    greetingsPanel.add(greetings,BorderLayout.NORTH);
+
+    JPanel boxesPanel = new JPanel();
+
+    //******************************************************************************************************************************
+    ImageIcon mingming = new ImageIcon("C:\\Users\\Mercedes Jade Lopez\\Pictures\\ad739bd4d256684c46ca24f13e71347c.jpg");
+    Image origPic = mingming.getImage();
+    Image scaledPic = origPic.getScaledInstance(500, 400, Image.SCALE_SMOOTH);
+    ImageIcon mingmingpic = new ImageIcon(scaledPic);
+    JLabel mingmingPic = new JLabel(mingmingpic);
+
+    //****************************************************************************************************************************
+
 
 
 
@@ -301,15 +325,142 @@ public class GUI extends JFrame{
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
     panelLeft.add(homeBtn);
-    panelLeft.add(manageUsersBtn);
-    panelLeft.add(addUsersBtn);
+    panelLeft.add(manageAccsBtn);
+    panelLeft.add(addAccBtn);
     panelLeft.add(logOutBtn);
 
     insidePanelRight.add(greetingsPanel);
+    insidePanelRight.add(boxesPanel);
+    insidePanelRight.add(mingmingPic);
+    return panel;
+  }
+
+  private JPanel createManageAccPage(){
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setPreferredSize(new Dimension(1000, 600));
+
+    JPanel panelLeft = new JPanel();
+    panelLeft.setBackground(new Color(13, 161, 204));
+    panelLeft.setPreferredSize(new Dimension(300, 600));
+
+
+    JLabel bankTitle = new JLabel("BANK NAME");
+    bankTitle.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+    bankTitle.setForeground(new Color(235, 241, 238));
+    bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
+    bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    JLabel bankSubtitle = new JLabel("Number One Bank");
+    bankSubtitle.setForeground(new Color(235, 241, 238));
+    bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 100, 0));
+
+    JButton homeBtn = new JButton("Home");
+    homeBtn.setPreferredSize(new Dimension(300, 70));
+    homeBtn.addActionListener(e -> {
+      mainLayout.show(main, "HOME");
+    });
+
+    JButton manageAccsBtn = new JButton("Manage Users");
+    manageAccsBtn.setPreferredSize(new Dimension(300, 70));
+
+    JButton addAccBtn = new JButton("Add Users");
+    addAccBtn.setPreferredSize(new Dimension(300, 70));
+    addAccBtn.addActionListener(e -> {
+      mainLayout.show(main, "ADD ACCOUNT" );
+    });
+
+    JButton logOutBtn = new JButton("Log Out");
+    logOutBtn.setPreferredSize(new Dimension(300, 70));
+    logOutBtn.addActionListener(e -> {
+      mainLayout.show(main, "LOG IN");
+    });
+
+    JPanel panelRight = new JPanel();
+    panelRight.setSize(new Dimension(700, 600));
+
+    panel.add(panelLeft, BorderLayout.WEST);
+    panel.add(panelRight, BorderLayout.CENTER);
+    panelRight.setBackground(new Color(161, 159, 159));
+
+    //******************************************************************************************************************************
+    ImageIcon mingming = new ImageIcon("C:\\Users\\Mercedes Jade Lopez\\Pictures\\70dfbc3bcd2eaa749265e86d23d8f20d.jpg");
+    Image origPic = mingming.getImage();
+    Image scaledPic = origPic.getScaledInstance(700, 600, Image.SCALE_SMOOTH);
+    ImageIcon mingmingpic = new ImageIcon(scaledPic);
+    JLabel mingmingPic = new JLabel(mingmingpic);
+    mingmingPic.setHorizontalAlignment(JLabel.CENTER);
+    panelRight.add(mingmingPic);
+    //****************************************************************************************************************************
+
+    panelLeft.add(bankTitle);
+    panelLeft.add(bankSubtitle);
+    panelLeft.add(homeBtn);
+    panelLeft.add(manageAccsBtn);
+    panelLeft.add(addAccBtn);
+    panelLeft.add(logOutBtn);
 
     return panel;
   }
 
+  private JPanel createAddAccPage(){
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setPreferredSize(new Dimension(1000, 600));
+
+    JPanel panelLeft = new JPanel();
+    panelLeft.setBackground(new Color(13, 161, 204));
+    panelLeft.setPreferredSize(new Dimension(300, 600));
+
+
+    JLabel bankTitle = new JLabel("BANK NAME");
+    bankTitle.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+    bankTitle.setForeground(new Color(235, 241, 238));
+    bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
+    bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    JLabel bankSubtitle = new JLabel("Number One Bank");
+    bankSubtitle.setForeground(new Color(235, 241, 238));
+    bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 100, 0));
+
+    JButton homeBtn = new JButton("Home");
+    homeBtn.setPreferredSize(new Dimension(300, 70));
+    homeBtn.addActionListener(e -> {
+      mainLayout.show(main, "HOME");
+    });
+
+    JButton manageAccsBtn = new JButton("Manage Users");
+    manageAccsBtn.setPreferredSize(new Dimension(300, 70));
+    manageAccsBtn.addActionListener(e -> {
+      mainLayout.show(main, "MANAGE ACCOUNT");
+    });
+
+    JButton addAccBtn = new JButton("Add Users");
+    addAccBtn.setPreferredSize(new Dimension(300, 70));
+    addAccBtn.addActionListener(e -> {
+      mainLayout.show(main, "ADD ACCOUNT" );
+    });
+
+    JButton logOutBtn = new JButton("Log Out");
+    logOutBtn.setPreferredSize(new Dimension(300, 70));
+    logOutBtn.addActionListener(e -> {
+      mainLayout.show(main, "LOG IN");
+    });
+
+    JPanel panelRight = new JPanel();
+    panelRight.setSize(new Dimension(700, 600));
+
+    panel.add(panelLeft, BorderLayout.WEST);
+    panel.add(panelRight, BorderLayout.CENTER);
+
+    panelLeft.add(bankTitle);
+    panelLeft.add(bankSubtitle);
+    panelLeft.add(homeBtn);
+    panelLeft.add(manageAccsBtn);
+    panelLeft.add(addAccBtn);
+    panelLeft.add(logOutBtn);
+    return panel;
+  }
 
   // Save account data to a CSV file
   private void addAccountToCSV(BankAccount account) {
