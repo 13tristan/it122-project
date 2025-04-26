@@ -1,10 +1,13 @@
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.Arrays;
-
 import models.BankAccount;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class GUI extends JFrame{
   private JPanel main;
@@ -20,14 +23,14 @@ public class GUI extends JFrame{
     main = new JPanel(mainLayout);
 
     JPanel loginPage = createLoginPage();
-    JPanel signUpPage = createSignUpPage();
+    //JPanel signUpPage = createSignUpPage();
     JPanel customerListPage = createCustomerListPage();
     JPanel transactionProcessPage = createTransactionProcessPage();
     JPanel transactionHistoryPage = createTransactionHistoryPage();
     JPanel addCustomerPage = createAddCustomerPage();
 
     main.add(loginPage, "LOG IN");
-    main.add(signUpPage, "SIGN UP");
+    //main.add(signUpPage, "SIGN UP");
     main.add(customerListPage, "CUSTOMER LIST");
     main.add(transactionProcessPage, "TRANSACTION PROCESS");
     main.add(transactionHistoryPage, "TRANSACTION HISTORY");
@@ -57,7 +60,7 @@ public class GUI extends JFrame{
     bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
     bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 130, 0));
 
-    JButton signUpBtn = new JButton("Create Account");
+    /*JButton signUpBtn = new JButton("Create Account");
     signUpBtn.setPreferredSize(new Dimension(300, 80));
     signUpBtn.setFont(new Font("Arial", Font.BOLD, 18));
     signUpBtn.addActionListener(e -> {
@@ -67,7 +70,7 @@ public class GUI extends JFrame{
     exitBtn.setPreferredSize(new Dimension(300, 80));
     exitBtn.setFont(new Font("Arial", Font.BOLD, 18));
 
-    exitBtn.addActionListener(e -> System.exit(0));
+    exitBtn.addActionListener(e -> System.exit(0));*/
 
     JPanel panelRight = new JPanel();
     panelRight.setSize(new Dimension(700, 600));
@@ -80,7 +83,7 @@ public class GUI extends JFrame{
     greeting.setAlignmentX(CENTER_ALIGNMENT);
 
     //USERNAME
-    JLabel accountNumber = new JLabel("Bank Account:");
+    JLabel accountNumber = new JLabel("Username:");
     accountNumber.setFont(new Font("Arial", Font.BOLD, 18));
     accountNumber.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
 
@@ -177,8 +180,8 @@ public class GUI extends JFrame{
 
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
-    panelLeft.add(signUpBtn);
-    panelLeft.add(exitBtn);
+   // panelLeft.add(signUpBtn);
+    //panelLeft.add(exitBtn);
 
     panelRight.add(greeting);
     panelRight.add(accountNumber);
@@ -190,7 +193,7 @@ public class GUI extends JFrame{
   }
 
   //CREATING ACCOUNT
-  private JPanel createSignUpPage(){
+  /**private JPanel createSignUpPage(){
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(1000, 600));
 
@@ -288,13 +291,14 @@ public class GUI extends JFrame{
     panelRight.add(signInPanel);
 
     return panel;
-  }
+  }*/
 
-
-  private JPanel createCustomerListPage(){
+  private JPanel createCustomerListPage() {
+    // Main panel with left and right sections (keep left panel unchanged)
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(1000, 600));
 
+    // Left panel (keep exactly as is)
     JPanel panelLeft = new JPanel();
     panelLeft.setBackground(new Color(13, 161, 204));
     panelLeft.setPreferredSize(new Dimension(300, 600));
@@ -312,9 +316,9 @@ public class GUI extends JFrame{
     bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
 
     JButton customerListBtn = new JButton("Customer List");
-    customerListBtn.setBackground(new Color(7, 65, 81));
-    customerListBtn.setForeground(new Color(225, 225, 225));
     customerListBtn.setPreferredSize(new Dimension(300, 60));
+    customerListBtn.setBackground(new Color(7, 65, 81));
+    customerListBtn.setForeground(new Color(255, 255, 255));
     customerListBtn.addActionListener(e -> {
       mainLayout.show(main,"CUSTOMER LIST");
     });
@@ -343,35 +347,214 @@ public class GUI extends JFrame{
       mainLayout.show(main, "LOG IN");
     });
 
-    JPanel panelRight = new JPanel();
-    panelRight.setSize(new Dimension(700, 600));
+    // RIGHT PANEL - COMPLETELY REVISED TO MATCH SCREENSHOT
+    JPanel panelRight = new JPanel(new BorderLayout());
     panelRight.setBackground(new Color(255, 255, 255));
-    panelRight.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
+    panelRight.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-    JPanel top = new JPanel(new GridBagLayout());
-    GridBagConstraints gbc = new GridBagConstraints();
+    // TOP SECTION - Customer Lists header and search
+    JPanel topSection = new JPanel();
+    topSection.setLayout(new BoxLayout(topSection, BoxLayout.Y_AXIS));
+    topSection.setBackground(Color.WHITE);
 
+    // Header with Customer Lists title and total
+    JPanel headerPanel = new JPanel(new BorderLayout());
+    headerPanel.setBackground(Color.WHITE);
 
+    JLabel customerListLabel = new JLabel("Customer Lists");
+    customerListLabel.setFont(new Font("Arial", Font.BOLD, 26));
+    headerPanel.add(customerListLabel, BorderLayout.WEST);
 
-    JPanel bottom = new JPanel();
+    JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    rightHeaderPanel.setBackground(Color.WHITE);
 
+    JLabel totalLabel = new JLabel("TOTAL: 3"); // Will update dynamically
+    totalLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+    rightHeaderPanel.add(totalLabel);
 
+    JLabel dateTimeLabel = new JLabel("", SwingConstants.RIGHT);
+    dateTimeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+    rightHeaderPanel.add(dateTimeLabel);
 
+    headerPanel.add(rightHeaderPanel, BorderLayout.CENTER);
+    topSection.add(headerPanel);
 
+    // Search panel
+    JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+    searchPanel.setBackground(Color.WHITE);
+    searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+    searchPanel.add(new JLabel("Search for Account ID:"));
+
+    JTextField searchInput = new JTextField(15);
+    searchPanel.add(searchInput);
+
+    JButton searchBtn = new JButton("Search");
+    searchBtn.setBackground(new Color(13, 161, 204));
+    searchBtn.setForeground(Color.WHITE);
+    searchBtn.setFont(new Font("Arial", Font.BOLD, 12));
+    searchPanel.add(searchBtn);
+
+    topSection.add(searchPanel);
+
+    // MAIN CONTENT - Split between customer table and account profile
+    JPanel contentPanel = new JPanel(new GridLayout(1, 2, 20, 0));
+    contentPanel.setBackground(Color.WHITE);
+
+    // LEFT CONTENT - Customer table
+    JPanel tablePanel = new JPanel(new BorderLayout());
+    tablePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+    // Table data - replace with your actual data loading
+    String[] columnNames = {"Account No", "Name", "Account Type"};
+    Object[][] data = {
+            {"117816", "Dave Scott", "Regular"},
+            {"607816", "John Scott", "Regular"},
+            {"642563", "Rahul Jha", "Investment"}
+    };
+
+    DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+      @Override
+      public boolean isCellEditable(int row, int column) {
+        return false;
+      }
+    };
+
+    JTable customerTable = new JTable(model);
+    customerTable.setFont(new Font("Arial", Font.PLAIN, 14));
+    customerTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+    customerTable.setRowHeight(25);
+
+    JScrollPane scrollPane = new JScrollPane(customerTable);
+    tablePanel.add(scrollPane, BorderLayout.CENTER);
+    contentPanel.add(tablePanel);
+
+    // RIGHT CONTENT - Account Profile
+    JPanel accountProfilePanel = new JPanel();
+    accountProfilePanel.setBorder(BorderFactory.createTitledBorder("Account Profile"));
+    accountProfilePanel.setLayout(new BoxLayout(accountProfilePanel, BoxLayout.Y_AXIS));
+
+    // Account ID section
+    JPanel accountIdPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    accountIdPanel.add(new JLabel("Account ID:"));
+    JLabel accountIdValue = new JLabel("");
+    accountIdPanel.add(accountIdValue);
+    accountProfilePanel.add(accountIdPanel);
+
+    // Account Name section
+    JPanel accountNamePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    accountNamePanel.add(new JLabel("Account Name:"));
+    JLabel accountNameValue = new JLabel("");
+    accountNamePanel.add(accountNameValue);
+    accountProfilePanel.add(accountNamePanel);
+
+    // Account Type section
+    JPanel accountTypePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    accountTypePanel.add(new JLabel("Account Type:"));
+    JLabel accountTypeValue = new JLabel("");
+    accountTypePanel.add(accountTypeValue);
+    accountProfilePanel.add(accountTypePanel);
+
+    // Balance section
+    JPanel balancePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    balancePanel.add(new JLabel("Balance Amount:"));
+    JLabel balanceValue = new JLabel("");
+    balancePanel.add(balanceValue);
+    accountProfilePanel.add(balancePanel);
+
+    // Close Account button
+    JButton closeAccountBtn = new JButton("Close Account");
+    closeAccountBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
+    closeAccountBtn.setBackground(new Color(220, 53, 69));
+    closeAccountBtn.setForeground(Color.WHITE);
+    accountProfilePanel.add(Box.createVerticalStrut(20));
+    accountProfilePanel.add(closeAccountBtn);
+
+    contentPanel.add(accountProfilePanel);
+    topSection.add(contentPanel);
+
+    // BOTTOM SECTION - Action buttons
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+    buttonPanel.setBackground(Color.WHITE);
+    buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+
+    // Add all sections to right panel
+    panelRight.add(topSection, BorderLayout.CENTER);
+    panelRight.add(buttonPanel, BorderLayout.SOUTH);
+
+    // Timer to update date/time
+    Timer timer = new Timer(1000, e -> {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+      dateTimeLabel.setText(LocalDateTime.now().format(formatter));
+    });
+    timer.start();
+
+    // Search functionality with account profile display
+    searchBtn.addActionListener(e -> {
+      String searchText = searchInput.getText().trim();
+      if (searchText.isEmpty()) {
+        JOptionPane.showMessageDialog(panel, "Please enter an account ID");
+        return;
+      }
+
+      boolean found = false;
+      for (int i = 0; i < model.getRowCount(); i++) {
+        if (model.getValueAt(i, 0).toString().equals(searchText)) {
+          customerTable.setRowSelectionInterval(i, i);
+          customerTable.scrollRectToVisible(customerTable.getCellRect(i, 0, true));
+
+          // Update account profile
+          accountIdValue.setText(model.getValueAt(i, 0).toString());
+          accountNameValue.setText(model.getValueAt(i, 1).toString());
+          accountTypeValue.setText(model.getValueAt(i, 2).toString());
+          // You would set actual balance from your data here
+          balanceValue.setText("$10,000.00"); // Example value
+
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        JOptionPane.showMessageDialog(panel, "Account not found", "Search Result", JOptionPane.WARNING_MESSAGE);
+      }
+    });
+
+    // Close Account button action
+    closeAccountBtn.addActionListener(e -> {
+      if (accountIdValue.getText().isEmpty()) {
+        JOptionPane.showMessageDialog(panel, "No account selected", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+      }
+
+      int confirm = JOptionPane.showConfirmDialog(panel,
+              "Are you sure you want to close account " + accountIdValue.getText() + "?",
+              "Confirm Account Closure",
+              JOptionPane.YES_NO_OPTION);
+
+      if (confirm == JOptionPane.YES_OPTION) {
+        // Add your account closure logic here
+        JOptionPane.showMessageDialog(panel, "Account " + accountIdValue.getText() + " closed");
+        accountIdValue.setText("");
+        accountNameValue.setText("");
+        accountTypeValue.setText("");
+        balanceValue.setText("");
+      }
+    });
+
+    // Add left and right panels to main panel
     panel.add(panelLeft, BorderLayout.WEST);
     panel.add(panelRight, BorderLayout.CENTER);
 
+    // Add components to left panel (unchanged)
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
     panelLeft.add(customerListBtn);
     panelLeft.add(transactionProcessBtn);
     panelLeft.add(transactionHistoryBtn);
     panelLeft.add(addCustomerBtn);
-    panelLeft.add(logOutBtn, BorderLayout.SOUTH);
+    panelLeft.add(logOutBtn);
 
-    panelRight.add(top);
-    panelRight.add(bottom);
     return panel;
   }
 
