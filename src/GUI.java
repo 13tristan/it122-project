@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.Arrays;
+
 import models.BankAccount;
 
 public class GUI extends JFrame{
@@ -19,15 +21,17 @@ public class GUI extends JFrame{
 
     JPanel loginPage = createLoginPage();
     JPanel signUpPage = createSignUpPage();
-    JPanel homePage = createHomepage();
-    JPanel manageAccPage = createManageAccPage();
-    JPanel addAccPage = createAddAccPage();
+    JPanel customerListPage = createCustomerListPage();
+    JPanel transactionProcessPage = createTransactionProcessPage();
+    JPanel transactionHistoryPage = createTransactionHistoryPage();
+    JPanel addCustomerPage = createAddCustomerPage();
 
     main.add(loginPage, "LOG IN");
     main.add(signUpPage, "SIGN UP");
-    main.add(homePage, "HOME");
-    main.add(manageAccPage, "MANAGE ACCOUNT");
-    main.add(addAccPage, "ADD ACCOUNT");
+    main.add(customerListPage, "CUSTOMER LIST");
+    main.add(transactionProcessPage, "TRANSACTION PROCESS");
+    main.add(transactionHistoryPage, "TRANSACTION HISTORY");
+    main.add(addCustomerPage, "ADD CUSTOMER");
 
     add(main);
     setLocationRelativeTo(null);
@@ -76,7 +80,7 @@ public class GUI extends JFrame{
     greeting.setAlignmentX(CENTER_ALIGNMENT);
 
     //USERNAME
-    JLabel accountNumber = new JLabel("USERNAME:");
+    JLabel accountNumber = new JLabel("Bank Account:");
     accountNumber.setFont(new Font("Arial", Font.BOLD, 18));
     accountNumber.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
 
@@ -93,23 +97,26 @@ public class GUI extends JFrame{
 
 
 
-    JLabel accountPasswd = new JLabel("PASSWORD:");
+    JLabel accountPasswd = new JLabel("Password:");
     accountPasswd.setFont(new Font("Arial", Font.BOLD, 18));
     accountPasswd.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 168));
+
 
     JPanel accPassPanel = new JPanel();
     accPassPanel.setBackground(new Color(255, 255, 255));
     accPassPanel.setSize(new Dimension(700, 90));
     accPassPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20 ,50));
 
-    JTextField inputAccPasswd= new JTextField(20);
+    JPasswordField inputAccPasswd= new JPasswordField(20);
     inputAccPasswd.setFont(new Font("Arial", Font.PLAIN, 18));
     accPassPanel.add(inputAccPasswd);
+
 
     JPanel loginBtnPanel = new JPanel();
     loginBtnPanel.setBackground(new Color(255, 255, 255));
     loginBtnPanel.setSize(new Dimension(700, 90));
     loginBtnPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20 ,50));
+
 
     JButton loginBtn = new JButton("Log In");
     loginBtn.setPreferredSize(new Dimension(100, 40));
@@ -117,8 +124,50 @@ public class GUI extends JFrame{
     loginBtn.setBackground(new Color(13, 161, 204));
     loginBtn.setForeground(new Color(255, 255, 255));
     loginBtnPanel.add(loginBtn);
+
+    /**
+     * PRACTICE
+    try{
+      loginBtn.addActionListener(e -> {
+        char [] password = inputAccPasswd.getPassword();
+      });
+    }catch (Exception e){
+
+    }**/
+
     loginBtn.addActionListener(e -> {
-      mainLayout.show(main, "HOME");
+      char[] password = inputAccPasswd.getPassword();
+      String inputPassword = new String(password);
+
+      // Clear the password from memory
+      Arrays.fill(password, '0');
+
+      // Verify password (compare to "123" in this example)
+      if (!inputPassword.equals("123")) {
+        // Show error message
+        JOptionPane.showMessageDialog(
+                this,                       // Parent component
+                "Incorrect password!",      // Message
+                "Login Error",              // Title
+                JOptionPane.ERROR_MESSAGE   // Message type
+        );
+
+        // Clear the password field
+        inputAccPasswd.setText("");
+
+        // Optionally set focus back to password field
+        inputAccPasswd.requestFocusInWindow();
+      } else {
+        // Password is correct - proceed with login
+        JOptionPane.showMessageDialog(
+                this,
+                "Login successful!",
+                "Welcome",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+        // Show the home screen
+        mainLayout.show(main, "CUSTOMER LIST");
+      }
     });
 
 
@@ -179,7 +228,7 @@ public class GUI extends JFrame{
     greeting.setAlignmentX(CENTER_ALIGNMENT);
 
     //USERNAME
-    JLabel accountNumber = new JLabel("USERNAME:");
+    JLabel accountNumber = new JLabel("Bank Account:");
     accountNumber.setFont(new Font("Arial", Font.BOLD, 18));
     accountNumber.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 200));
 
@@ -196,7 +245,7 @@ public class GUI extends JFrame{
 
 
 
-    JLabel accountPasswd = new JLabel("PASSWORD:");
+    JLabel accountPasswd = new JLabel("Password:");
     accountPasswd.setFont(new Font("Arial", Font.BOLD, 18));
     accountPasswd.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 323));
 
@@ -221,7 +270,7 @@ public class GUI extends JFrame{
     signInBtn.setForeground(new Color(255, 255, 255));
     signInPanel.add(signInBtn);
     signInBtn.addActionListener(e -> {
-      mainLayout.show(main, "HOME");
+      mainLayout.show(main, "CUSTOMER LIST");
     });
 
     panel.add(panelLeft, BorderLayout.WEST);
@@ -241,7 +290,8 @@ public class GUI extends JFrame{
     return panel;
   }
 
-  private JPanel createHomepage(){
+
+  private JPanel createCustomerListPage(){
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(1000, 600));
 
@@ -259,21 +309,32 @@ public class GUI extends JFrame{
     JLabel bankSubtitle = new JLabel("Number One Bank");
     bankSubtitle.setForeground(new Color(235, 241, 238));
     bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 100, 0));
+    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
 
-    JButton homeBtn = new JButton("Home");
-    homeBtn.setPreferredSize(new Dimension(300, 70));
-
-    JButton manageAccsBtn = new JButton("Manage Users");
-    manageAccsBtn.setPreferredSize(new Dimension(300, 70));
-    manageAccsBtn.addActionListener(e -> {
-      mainLayout.show(main, "MANAGE ACCOUNT");
+    JButton customerListBtn = new JButton("Customer List");
+    customerListBtn.setBackground(new Color(7, 65, 81));
+    customerListBtn.setForeground(new Color(225, 225, 225));
+    customerListBtn.setPreferredSize(new Dimension(300, 60));
+    customerListBtn.addActionListener(e -> {
+      mainLayout.show(main,"CUSTOMER LIST");
     });
 
-    JButton addAccBtn = new JButton("Add Users");
-    addAccBtn.setPreferredSize(new Dimension(300, 70));
-    addAccBtn.addActionListener(e -> {
-      mainLayout.show(main, "ADD ACCOUNT" );
+    JButton transactionProcessBtn = new JButton("Transaction Process");
+    transactionProcessBtn.setPreferredSize(new Dimension(300, 60));
+    transactionProcessBtn.addActionListener(e -> {
+      mainLayout.show(main, "TRANSACTION PROCESS");
+    });
+
+    JButton transactionHistoryBtn = new JButton("Transaction History");
+    transactionHistoryBtn.setPreferredSize(new Dimension(300, 60));
+    transactionHistoryBtn.addActionListener(e -> {
+      mainLayout.show(main, "TRANSACTION HISTORY" );
+    });
+
+    JButton addCustomerBtn = new JButton("Add Customer");
+    addCustomerBtn.setPreferredSize(new Dimension(300, 60));
+    addCustomerBtn.addActionListener(e -> {
+      mainLayout.show(main, "ADD CUSTOMER" );
     });
 
     JButton logOutBtn = new JButton("Log Out");
@@ -284,37 +345,16 @@ public class GUI extends JFrame{
 
     JPanel panelRight = new JPanel();
     panelRight.setSize(new Dimension(700, 600));
-    panelRight.setBackground(new Color(161, 159, 159));
-    panelRight.setBorder(BorderFactory.createEmptyBorder(30,0,30,0));
+    panelRight.setBackground(new Color(255, 255, 255));
+    panelRight.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
 
-    JPanel insidePanelRight = new JPanel();
-    insidePanelRight.setSize(new Dimension(700, 600));
-    insidePanelRight.setBackground(new Color(255, 255, 255));
-    insidePanelRight.setAlignmentX(Component.CENTER_ALIGNMENT);
-    insidePanelRight.setAlignmentY(Component.CENTER_ALIGNMENT);
-    insidePanelRight.setLayout(new BoxLayout(insidePanelRight, BoxLayout.Y_AXIS));
-    panelRight.add(insidePanelRight);
-
-    JPanel greetingsPanel = new JPanel(new BorderLayout());
-    greetingsPanel.setBackground(new Color(232, 232, 232));
-    greetingsPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-
-    JLabel greetings = new JLabel("Welcome Admin");
-    greetingsPanel.add(greetings,BorderLayout.NORTH);
-
-    JPanel boxesPanel = new JPanel();
-
-    //******************************************************************************************************************************
-    ImageIcon mingming = new ImageIcon("C:\\Users\\Mercedes Jade Lopez\\Pictures\\ad739bd4d256684c46ca24f13e71347c.jpg");
-    Image origPic = mingming.getImage();
-    Image scaledPic = origPic.getScaledInstance(500, 400, Image.SCALE_SMOOTH);
-    ImageIcon mingmingpic = new ImageIcon(scaledPic);
-    JLabel mingmingPic = new JLabel(mingmingpic);
-
-    //****************************************************************************************************************************
+    JPanel top = new JPanel(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
 
 
+
+    JPanel bottom = new JPanel();
 
 
 
@@ -324,18 +364,18 @@ public class GUI extends JFrame{
 
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
-    panelLeft.add(homeBtn);
-    panelLeft.add(manageAccsBtn);
-    panelLeft.add(addAccBtn);
-    panelLeft.add(logOutBtn);
+    panelLeft.add(customerListBtn);
+    panelLeft.add(transactionProcessBtn);
+    panelLeft.add(transactionHistoryBtn);
+    panelLeft.add(addCustomerBtn);
+    panelLeft.add(logOutBtn, BorderLayout.SOUTH);
 
-    insidePanelRight.add(greetingsPanel);
-    insidePanelRight.add(boxesPanel);
-    insidePanelRight.add(mingmingPic);
+    panelRight.add(top);
+    panelRight.add(bottom);
     return panel;
   }
 
-  private JPanel createManageAccPage(){
+  private JPanel createTransactionProcessPage(){
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(1000, 600));
 
@@ -353,21 +393,32 @@ public class GUI extends JFrame{
     JLabel bankSubtitle = new JLabel("Number One Bank");
     bankSubtitle.setForeground(new Color(235, 241, 238));
     bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 100, 0));
+    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
 
-    JButton homeBtn = new JButton("Home");
-    homeBtn.setPreferredSize(new Dimension(300, 70));
-    homeBtn.addActionListener(e -> {
-      mainLayout.show(main, "HOME");
+    JButton customerListBtn = new JButton("Customer List");
+    customerListBtn.setPreferredSize(new Dimension(300, 60));
+    customerListBtn.addActionListener(e -> {
+      mainLayout.show(main,"CUSTOMER LIST");
     });
 
-    JButton manageAccsBtn = new JButton("Manage Users");
-    manageAccsBtn.setPreferredSize(new Dimension(300, 70));
+    JButton transactionProcessBtn = new JButton("Transaction Process");
+    transactionProcessBtn.setPreferredSize(new Dimension(300, 60));
+    transactionProcessBtn.setBackground(new Color(7, 65, 81));
+    transactionProcessBtn.setForeground(new Color(255, 255, 255));
+    transactionProcessBtn.addActionListener(e -> {
+      mainLayout.show(main, "TRANSACTION PROCESS");
+    });
 
-    JButton addAccBtn = new JButton("Add Users");
-    addAccBtn.setPreferredSize(new Dimension(300, 70));
-    addAccBtn.addActionListener(e -> {
-      mainLayout.show(main, "ADD ACCOUNT" );
+    JButton transactionHistoryBtn = new JButton("Transaction History");
+    transactionHistoryBtn.setPreferredSize(new Dimension(300, 60));
+    transactionHistoryBtn.addActionListener(e -> {
+      mainLayout.show(main, "TRANSACTION HISTORY" );
+    });
+
+    JButton addCustomerBtn = new JButton("Add Customer");
+    addCustomerBtn.setPreferredSize(new Dimension(300, 60));
+    addCustomerBtn.addActionListener(e -> {
+      mainLayout.show(main, "ADD CUSTOMER" );
     });
 
     JButton logOutBtn = new JButton("Log Out");
@@ -378,32 +429,34 @@ public class GUI extends JFrame{
 
     JPanel panelRight = new JPanel();
     panelRight.setSize(new Dimension(700, 600));
+    panelRight.setBackground(new Color(255, 255, 255));
+    panelRight.setBorder(BorderFactory.createEmptyBorder(50, 10, 200, 10));
+    panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
+
+    JLabel header = new JLabel("Create Account");
+    header.setFont(new Font("Arial", Font.BOLD, 36));
+    header.setAlignmentX(LEFT_ALIGNMENT);
+
+
+
+
 
     panel.add(panelLeft, BorderLayout.WEST);
     panel.add(panelRight, BorderLayout.CENTER);
-    panelRight.setBackground(new Color(161, 159, 159));
-
-    //******************************************************************************************************************************
-    ImageIcon mingming = new ImageIcon("C:\\Users\\Mercedes Jade Lopez\\Pictures\\70dfbc3bcd2eaa749265e86d23d8f20d.jpg");
-    Image origPic = mingming.getImage();
-    Image scaledPic = origPic.getScaledInstance(700, 600, Image.SCALE_SMOOTH);
-    ImageIcon mingmingpic = new ImageIcon(scaledPic);
-    JLabel mingmingPic = new JLabel(mingmingpic);
-    mingmingPic.setHorizontalAlignment(JLabel.CENTER);
-    panelRight.add(mingmingPic);
-    //****************************************************************************************************************************
 
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
-    panelLeft.add(homeBtn);
-    panelLeft.add(manageAccsBtn);
-    panelLeft.add(addAccBtn);
-    panelLeft.add(logOutBtn);
+    panelLeft.add(customerListBtn);
+    panelLeft.add(transactionProcessBtn);
+    panelLeft.add(transactionHistoryBtn);
+    panelLeft.add(addCustomerBtn);
+    panelLeft.add(logOutBtn, BorderLayout.SOUTH);
 
+    panelRight.add(header);
     return panel;
   }
 
-  private JPanel createAddAccPage(){
+  private JPanel createTransactionHistoryPage(){
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(1000, 600));
 
@@ -421,24 +474,32 @@ public class GUI extends JFrame{
     JLabel bankSubtitle = new JLabel("Number One Bank");
     bankSubtitle.setForeground(new Color(235, 241, 238));
     bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 100, 0));
+    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
 
-    JButton homeBtn = new JButton("Home");
-    homeBtn.setPreferredSize(new Dimension(300, 70));
-    homeBtn.addActionListener(e -> {
-      mainLayout.show(main, "HOME");
+    JButton customerListBtn = new JButton("Customer List");
+    customerListBtn.setPreferredSize(new Dimension(300, 60));
+    customerListBtn.addActionListener(e -> {
+      mainLayout.show(main,"CUSTOMER LIST");
     });
 
-    JButton manageAccsBtn = new JButton("Manage Users");
-    manageAccsBtn.setPreferredSize(new Dimension(300, 70));
-    manageAccsBtn.addActionListener(e -> {
-      mainLayout.show(main, "MANAGE ACCOUNT");
+    JButton transactionProcessBtn = new JButton("Transaction Process");
+    transactionProcessBtn.setPreferredSize(new Dimension(300, 60));
+    transactionProcessBtn.addActionListener(e -> {
+      mainLayout.show(main, "TRANSACTION PROCESS");
     });
 
-    JButton addAccBtn = new JButton("Add Users");
-    addAccBtn.setPreferredSize(new Dimension(300, 70));
-    addAccBtn.addActionListener(e -> {
-      mainLayout.show(main, "ADD ACCOUNT" );
+    JButton transactionHistoryBtn = new JButton("Transaction History");
+    transactionHistoryBtn.setPreferredSize(new Dimension(300, 60));
+    transactionHistoryBtn.setBackground(new Color(7, 65, 81));
+    transactionHistoryBtn.setForeground(new Color(255, 255, 255));
+    transactionHistoryBtn.addActionListener(e -> {
+      mainLayout.show(main, "TRANSACTION HISTORY" );
+    });
+
+    JButton addCustomerBtn = new JButton("Add Customer");
+    addCustomerBtn.setPreferredSize(new Dimension(300, 60));
+    addCustomerBtn.addActionListener(e -> {
+      mainLayout.show(main, "ADD CUSTOMER" );
     });
 
     JButton logOutBtn = new JButton("Log Out");
@@ -449,18 +510,114 @@ public class GUI extends JFrame{
 
     JPanel panelRight = new JPanel();
     panelRight.setSize(new Dimension(700, 600));
+    panelRight.setBackground(new Color(255, 255, 255));
+    panelRight.setBorder(BorderFactory.createEmptyBorder(50, 10, 200, 10));
+    panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
+
+    JLabel header = new JLabel("Create Account");
+    header.setFont(new Font("Arial", Font.BOLD, 36));
+    header.setAlignmentX(LEFT_ALIGNMENT);
+
+
+
+
 
     panel.add(panelLeft, BorderLayout.WEST);
     panel.add(panelRight, BorderLayout.CENTER);
 
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
-    panelLeft.add(homeBtn);
-    panelLeft.add(manageAccsBtn);
-    panelLeft.add(addAccBtn);
-    panelLeft.add(logOutBtn);
+    panelLeft.add(customerListBtn);
+    panelLeft.add(transactionProcessBtn);
+    panelLeft.add(transactionHistoryBtn);
+    panelLeft.add(addCustomerBtn);
+    panelLeft.add(logOutBtn, BorderLayout.SOUTH);
+
+    panelRight.add(header);
     return panel;
   }
+
+  private JPanel createAddCustomerPage(){
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setPreferredSize(new Dimension(1000, 600));
+
+    JPanel panelLeft = new JPanel();
+    panelLeft.setBackground(new Color(13, 161, 204));
+    panelLeft.setPreferredSize(new Dimension(300, 600));
+
+
+    JLabel bankTitle = new JLabel("BANK NAME");
+    bankTitle.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+    bankTitle.setForeground(new Color(235, 241, 238));
+    bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
+    bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    JLabel bankSubtitle = new JLabel("Number One Bank");
+    bankSubtitle.setForeground(new Color(235, 241, 238));
+    bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
+
+    JButton customerListBtn = new JButton("Customer List");
+    customerListBtn.setPreferredSize(new Dimension(300, 60));
+    customerListBtn.addActionListener(e -> {
+      mainLayout.show(main,"CUSTOMER LIST");
+    });
+
+    JButton transactionProcessBtn = new JButton("Transaction Process");
+    transactionProcessBtn.setPreferredSize(new Dimension(300, 60));
+    transactionProcessBtn.addActionListener(e -> {
+      mainLayout.show(main, "TRANSACTION PROCESS");
+    });
+
+    JButton transactionHistoryBtn = new JButton("Transaction History");
+    transactionHistoryBtn.setPreferredSize(new Dimension(300, 60));
+    transactionHistoryBtn.addActionListener(e -> {
+      mainLayout.show(main, "TRANSACTION HISTORY" );
+    });
+
+    JButton addCustomerBtn = new JButton("Add Customer");
+    addCustomerBtn.setPreferredSize(new Dimension(300, 60));
+    addCustomerBtn.setBackground(new Color(7, 65, 81));
+    addCustomerBtn.setForeground(new Color(255, 255, 255));
+    addCustomerBtn.addActionListener(e -> {
+      mainLayout.show(main, "ADD CUSTOMER" );
+    });
+
+    JButton logOutBtn = new JButton("Log Out");
+    logOutBtn.setPreferredSize(new Dimension(300, 70));
+    logOutBtn.addActionListener(e -> {
+      mainLayout.show(main, "LOG IN");
+    });
+
+    JPanel panelRight = new JPanel();
+    panelRight.setSize(new Dimension(700, 600));
+    panelRight.setBackground(new Color(255, 255, 255));
+    panelRight.setBorder(BorderFactory.createEmptyBorder(50, 10, 200, 10));
+    panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
+
+    JLabel header = new JLabel("Create Account");
+    header.setFont(new Font("Arial", Font.BOLD, 36));
+    header.setAlignmentX(LEFT_ALIGNMENT);
+
+
+
+
+
+    panel.add(panelLeft, BorderLayout.WEST);
+    panel.add(panelRight, BorderLayout.CENTER);
+
+    panelLeft.add(bankTitle);
+    panelLeft.add(bankSubtitle);
+    panelLeft.add(customerListBtn);
+    panelLeft.add(transactionProcessBtn);
+    panelLeft.add(transactionHistoryBtn);
+    panelLeft.add(addCustomerBtn);
+    panelLeft.add(logOutBtn, BorderLayout.SOUTH);
+
+    panelRight.add(header);
+    return panel;
+  }
+
 
   // Save account data to a CSV file
   private void addAccountToCSV(BankAccount account) {
