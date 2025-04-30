@@ -294,15 +294,14 @@ public class GUI extends JFrame{
   }*/
 
   private JPanel createCustomerListPage() {
-    // Main panel with left and right sections (keep left panel unchanged)
+    // Main panel with left and right sections
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(1000, 600));
 
-    // Left panel (keep exactly as is)
+    // LEFT PANEL - Navigation (unchanged)
     JPanel panelLeft = new JPanel();
     panelLeft.setBackground(new Color(13, 161, 204));
     panelLeft.setPreferredSize(new Dimension(300, 600));
-
 
     JLabel bankTitle = new JLabel("BANK NAME");
     bankTitle.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
@@ -318,46 +317,36 @@ public class GUI extends JFrame{
     JButton customerListBtn = new JButton("Customer List");
     customerListBtn.setPreferredSize(new Dimension(300, 60));
     customerListBtn.setBackground(new Color(7, 65, 81));
-    customerListBtn.setForeground(new Color(255, 255, 255));
-    customerListBtn.addActionListener(e -> {
-      mainLayout.show(main,"CUSTOMER LIST");
-    });
+    customerListBtn.setForeground(Color.WHITE);
+    customerListBtn.addActionListener(e -> mainLayout.show(main, "CUSTOMER LIST"));
 
     JButton transactionProcessBtn = new JButton("Transaction Process");
     transactionProcessBtn.setPreferredSize(new Dimension(300, 60));
-    transactionProcessBtn.addActionListener(e -> {
-      mainLayout.show(main, "TRANSACTION PROCESS");
-    });
+    transactionProcessBtn.addActionListener(e -> mainLayout.show(main, "TRANSACTION PROCESS"));
 
     JButton transactionHistoryBtn = new JButton("Transaction History");
     transactionHistoryBtn.setPreferredSize(new Dimension(300, 60));
-    transactionHistoryBtn.addActionListener(e -> {
-      mainLayout.show(main, "TRANSACTION HISTORY" );
-    });
+    transactionHistoryBtn.addActionListener(e -> mainLayout.show(main, "TRANSACTION HISTORY"));
 
     JButton addCustomerBtn = new JButton("Add Customer");
     addCustomerBtn.setPreferredSize(new Dimension(300, 60));
-    addCustomerBtn.addActionListener(e -> {
-      mainLayout.show(main, "ADD CUSTOMER" );
-    });
+    addCustomerBtn.addActionListener(e -> mainLayout.show(main, "ADD CUSTOMER"));
 
     JButton logOutBtn = new JButton("Log Out");
     logOutBtn.setPreferredSize(new Dimension(300, 70));
-    logOutBtn.addActionListener(e -> {
-      mainLayout.show(main, "LOG IN");
-    });
+    logOutBtn.addActionListener(e -> mainLayout.show(main, "LOG IN"));
 
-    // RIGHT PANEL - COMPLETELY REVISED TO MATCH SCREENSHOT
+    // RIGHT PANEL - Customer List and Account Profile
     JPanel panelRight = new JPanel(new BorderLayout());
-    panelRight.setBackground(new Color(255, 255, 255));
+    panelRight.setBackground(Color.WHITE);
     panelRight.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-    // TOP SECTION - Customer Lists header and search
+    // TOP SECTION - Header and Search
     JPanel topSection = new JPanel();
     topSection.setLayout(new BoxLayout(topSection, BoxLayout.Y_AXIS));
     topSection.setBackground(Color.WHITE);
 
-    // Header with Customer Lists title and total
+    // Header Panel
     JPanel headerPanel = new JPanel(new BorderLayout());
     headerPanel.setBackground(Color.WHITE);
 
@@ -368,7 +357,7 @@ public class GUI extends JFrame{
     JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     rightHeaderPanel.setBackground(Color.WHITE);
 
-    JLabel totalLabel = new JLabel("TOTAL: 3"); // Will update dynamically
+    JLabel totalLabel = new JLabel("TOTAL: 0");
     totalLabel.setFont(new Font("Arial", Font.PLAIN, 14));
     rightHeaderPanel.add(totalLabel);
 
@@ -379,7 +368,7 @@ public class GUI extends JFrame{
     headerPanel.add(rightHeaderPanel, BorderLayout.CENTER);
     topSection.add(headerPanel);
 
-    // Search panel
+    // Search Panel
     JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
     searchPanel.setBackground(Color.WHITE);
     searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
@@ -397,28 +386,56 @@ public class GUI extends JFrame{
 
     topSection.add(searchPanel);
 
-    // MAIN CONTENT - Split between customer table and account profile
+    // MAIN CONTENT - Table and Account Profile
     JPanel contentPanel = new JPanel(new GridLayout(1, 2, 20, 0));
     contentPanel.setBackground(Color.WHITE);
 
-    // LEFT CONTENT - Customer table
+    // Customer Table Panel
     JPanel tablePanel = new JPanel(new BorderLayout());
     tablePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
-    // Table data - replace with your actual data loading
-    String[] columnNames = {"Account No", "Name", "Account Type"};
-    Object[][] data = {
-            {"117816", "Dave Scott", "Regular"},
-            {"607816", "John Scott", "Regular"},
-            {"642563", "Rahul Jha", "Investment"}
-    };
-
-    DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+    // Table Data
+    String[] columnNames = {"Account No", "Name", "Account Type", "Balance"};
+    DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
       @Override
       public boolean isCellEditable(int row, int column) {
         return false;
       }
     };
+
+    // Load data from CSV
+    try (BufferedReader br = new BufferedReader(new FileReader("accounts.csv"))) {
+      String line;
+      boolean firstLine = true;
+
+      while ((line = br.readLine()) != null) {
+        if (firstLine) {
+          firstLine = false;
+          continue; // Skip header
+        }
+
+        String[] values = line.split(",");
+        if (values.length >= 4) {
+          String accountNumber = values[0].trim();
+          String name = values[1].trim();
+          double balance = Double.parseDouble(values[2].trim());
+          String accountType = values[3].trim();
+
+          // Add formatted balance to the table
+          model.addRow(new Object[]{
+                  accountNumber,
+                  name,
+                  accountType,
+                  String.format("$%,.2f", balance) // Formatted as currency
+          });
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Error loading customer data from CSV", "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (NumberFormatException e) {
+      JOptionPane.showMessageDialog(null, "Error parsing balance amounts", "Data Error", JOptionPane.ERROR_MESSAGE);
+    }
 
     JTable customerTable = new JTable(model);
     customerTable.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -429,40 +446,43 @@ public class GUI extends JFrame{
     tablePanel.add(scrollPane, BorderLayout.CENTER);
     contentPanel.add(tablePanel);
 
-    // RIGHT CONTENT - Account Profile
+    // Update total count
+    totalLabel.setText("TOTAL: " + model.getRowCount());
+
+    // Account Profile Panel
     JPanel accountProfilePanel = new JPanel();
     accountProfilePanel.setBorder(BorderFactory.createTitledBorder("Account Profile"));
     accountProfilePanel.setLayout(new BoxLayout(accountProfilePanel, BoxLayout.Y_AXIS));
 
-    // Account ID section
+    // Account ID
     JPanel accountIdPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     accountIdPanel.add(new JLabel("Account ID:"));
     JLabel accountIdValue = new JLabel("");
     accountIdPanel.add(accountIdValue);
     accountProfilePanel.add(accountIdPanel);
 
-    // Account Name section
+    // Account Name
     JPanel accountNamePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     accountNamePanel.add(new JLabel("Account Name:"));
     JLabel accountNameValue = new JLabel("");
     accountNamePanel.add(accountNameValue);
     accountProfilePanel.add(accountNamePanel);
 
-    // Account Type section
+    // Account Type
     JPanel accountTypePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     accountTypePanel.add(new JLabel("Account Type:"));
     JLabel accountTypeValue = new JLabel("");
     accountTypePanel.add(accountTypeValue);
     accountProfilePanel.add(accountTypePanel);
 
-    // Balance section
+    // Balance
     JPanel balancePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     balancePanel.add(new JLabel("Balance Amount:"));
     JLabel balanceValue = new JLabel("");
     balancePanel.add(balanceValue);
     accountProfilePanel.add(balancePanel);
 
-    // Close Account button
+    // Close Account Button
     JButton closeAccountBtn = new JButton("Close Account");
     closeAccountBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
     closeAccountBtn.setBackground(new Color(220, 53, 69));
@@ -473,27 +493,27 @@ public class GUI extends JFrame{
     contentPanel.add(accountProfilePanel);
     topSection.add(contentPanel);
 
-    // BOTTOM SECTION - Action buttons
+    // BOTTOM BUTTONS
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
     buttonPanel.setBackground(Color.WHITE);
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-    // Add all sections to right panel
+    // Add components to right panel
     panelRight.add(topSection, BorderLayout.CENTER);
     panelRight.add(buttonPanel, BorderLayout.SOUTH);
 
-    // Timer to update date/time
+    // Timer for date/time
     Timer timer = new Timer(1000, e -> {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
       dateTimeLabel.setText(LocalDateTime.now().format(formatter));
     });
     timer.start();
 
-    // Search functionality with account profile display
+    // Search Functionality
     searchBtn.addActionListener(e -> {
       String searchText = searchInput.getText().trim();
       if (searchText.isEmpty()) {
-        JOptionPane.showMessageDialog(panel, "Please enter an account ID");
+        JOptionPane.showMessageDialog(panel, "Please enter an account ID", "Error", JOptionPane.ERROR_MESSAGE);
         return;
       }
 
@@ -503,12 +523,11 @@ public class GUI extends JFrame{
           customerTable.setRowSelectionInterval(i, i);
           customerTable.scrollRectToVisible(customerTable.getCellRect(i, 0, true));
 
-          // Update account profile
+          // Update account profile - balance is now column 3
           accountIdValue.setText(model.getValueAt(i, 0).toString());
           accountNameValue.setText(model.getValueAt(i, 1).toString());
           accountTypeValue.setText(model.getValueAt(i, 2).toString());
-          // You would set actual balance from your data here
-          balanceValue.setText("$10,000.00"); // Example value
+          balanceValue.setText(model.getValueAt(i, 3).toString()); // This is the balance
 
           found = true;
           break;
@@ -520,7 +539,7 @@ public class GUI extends JFrame{
       }
     });
 
-    // Close Account button action
+    // Close Account Functionality
     closeAccountBtn.addActionListener(e -> {
       if (accountIdValue.getText().isEmpty()) {
         JOptionPane.showMessageDialog(panel, "No account selected", "Error", JOptionPane.ERROR_MESSAGE);
@@ -533,7 +552,7 @@ public class GUI extends JFrame{
               JOptionPane.YES_NO_OPTION);
 
       if (confirm == JOptionPane.YES_OPTION) {
-        // Add your account closure logic here
+        // Here you would add your account closure logic
         JOptionPane.showMessageDialog(panel, "Account " + accountIdValue.getText() + " closed");
         accountIdValue.setText("");
         accountNameValue.setText("");
@@ -542,11 +561,11 @@ public class GUI extends JFrame{
       }
     });
 
-    // Add left and right panels to main panel
+    // Add panels to main panel
     panel.add(panelLeft, BorderLayout.WEST);
     panel.add(panelRight, BorderLayout.CENTER);
 
-    // Add components to left panel (unchanged)
+    // Add components to left panel
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
     panelLeft.add(customerListBtn);
@@ -558,14 +577,15 @@ public class GUI extends JFrame{
     return panel;
   }
 
-  private JPanel createTransactionProcessPage(){
+  private JPanel createTransactionProcessPage() {
+    // Main panel with left and right sections
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(1000, 600));
 
+    // LEFT PANEL - Keep exactly as is
     JPanel panelLeft = new JPanel();
     panelLeft.setBackground(new Color(13, 161, 204));
     panelLeft.setPreferredSize(new Dimension(300, 600));
-
 
     JLabel bankTitle = new JLabel("BANK NAME");
     bankTitle.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
@@ -595,13 +615,13 @@ public class GUI extends JFrame{
     JButton transactionHistoryBtn = new JButton("Transaction History");
     transactionHistoryBtn.setPreferredSize(new Dimension(300, 60));
     transactionHistoryBtn.addActionListener(e -> {
-      mainLayout.show(main, "TRANSACTION HISTORY" );
+      mainLayout.show(main, "TRANSACTION HISTORY");
     });
 
     JButton addCustomerBtn = new JButton("Add Customer");
     addCustomerBtn.setPreferredSize(new Dimension(300, 60));
     addCustomerBtn.addActionListener(e -> {
-      mainLayout.show(main, "ADD CUSTOMER" );
+      mainLayout.show(main, "ADD CUSTOMER");
     });
 
     JButton logOutBtn = new JButton("Log Out");
@@ -610,33 +630,247 @@ public class GUI extends JFrame{
       mainLayout.show(main, "LOG IN");
     });
 
-    JPanel panelRight = new JPanel();
-    panelRight.setSize(new Dimension(700, 600));
+    // RIGHT PANEL - Revised with search functionality
+    JPanel panelRight = new JPanel(new BorderLayout());
     panelRight.setBackground(new Color(255, 255, 255));
-    panelRight.setBorder(BorderFactory.createEmptyBorder(50, 10, 200, 10));
-    panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
+    panelRight.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-    JLabel header = new JLabel("Create Account");
-    header.setFont(new Font("Arial", Font.BOLD, 36));
-    header.setAlignmentX(LEFT_ALIGNMENT);
+    // Transaction type buttons
+    JPanel transactionTypePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+    transactionTypePanel.setBackground(Color.WHITE);
 
+    JButton depositBtn = createTransactionButton("Deposit");
+    JButton withdrawBtn = createTransactionButton("Withdraw");
+    JButton transferBtn = createTransactionButton("Transfer");
 
+    transactionTypePanel.add(depositBtn);
+    transactionTypePanel.add(withdrawBtn);
+    transactionTypePanel.add(transferBtn);
 
+    panelRight.add(transactionTypePanel, BorderLayout.NORTH);
 
+    // Transaction form panel
+    JPanel transactionFormPanel = new JPanel();
+    transactionFormPanel.setLayout(new BoxLayout(transactionFormPanel, BoxLayout.Y_AXIS));
+    transactionFormPanel.setBorder(BorderFactory.createTitledBorder("Deposit"));
+    transactionFormPanel.setBackground(Color.WHITE);
 
+    // Account search panel
+    JPanel accountSearchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    accountSearchPanel.setBackground(Color.WHITE);
+    accountSearchPanel.add(new JLabel("Account No:"));
+
+    JTextField accountField = new JTextField(10);
+    accountSearchPanel.add(accountField);
+
+    JButton searchBtn = new JButton("Search");
+    searchBtn.setBackground(new Color(13, 161, 204));
+    searchBtn.setForeground(Color.WHITE);
+    searchBtn.setFont(new Font("Arial", Font.BOLD, 12));
+    accountSearchPanel.add(searchBtn);
+
+    transactionFormPanel.add(accountSearchPanel);
+
+    // Account information
+    JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    namePanel.setBackground(Color.WHITE);
+    namePanel.add(new JLabel("Name:"));
+    JLabel nameLabel = new JLabel("");
+    namePanel.add(nameLabel);
+    transactionFormPanel.add(namePanel);
+
+    JPanel balancePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    balancePanel.setBackground(Color.WHITE);
+    balancePanel.add(new JLabel("Balance:"));
+    JLabel balanceLabel = new JLabel("$0.00");
+    balancePanel.add(balanceLabel);
+    transactionFormPanel.add(balancePanel);
+
+    // Transaction amount panel (will be updated based on transaction type)
+    JPanel amountPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    amountPanel.setBackground(Color.WHITE);
+    amountPanel.add(new JLabel("Amount: "));
+    JTextField amountField = new JTextField(10);
+    amountPanel.add(amountField);
+
+    // Destination account panel (for transfers)
+    JPanel destAccountPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    destAccountPanel.setBackground(Color.WHITE);
+    destAccountPanel.add(new JLabel("To Account:"));
+    JTextField destAccountField = new JTextField(10);
+    destAccountPanel.add(destAccountField);
+    destAccountPanel.setVisible(false); // Hidden by default
+
+    // Total panel
+    JPanel totalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    totalPanel.setBackground(Color.WHITE);
+    totalPanel.add(new JLabel("Total:"));
+    JLabel totalLabel = new JLabel("$0.00");
+    totalPanel.add(totalLabel);
+
+    // Process button
+    JButton processBtn = new JButton("DEPOSIT");
+    processBtn.setBackground(new Color(13, 161, 204));
+    processBtn.setForeground(Color.WHITE);
+    processBtn.setFont(new Font("Arial", Font.BOLD, 14));
+    processBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+    // Add components to form
+    transactionFormPanel.add(amountPanel);
+    transactionFormPanel.add(destAccountPanel);
+    transactionFormPanel.add(totalPanel);
+    transactionFormPanel.add(Box.createVerticalStrut(20));
+    transactionFormPanel.add(processBtn);
+
+    panelRight.add(transactionFormPanel, BorderLayout.CENTER);
+
+    // Add left and right panels to main panel
     panel.add(panelLeft, BorderLayout.WEST);
     panel.add(panelRight, BorderLayout.CENTER);
 
+    // Add components to left panel
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
     panelLeft.add(customerListBtn);
     panelLeft.add(transactionProcessBtn);
     panelLeft.add(transactionHistoryBtn);
     panelLeft.add(addCustomerBtn);
-    panelLeft.add(logOutBtn, BorderLayout.SOUTH);
+    panelLeft.add(logOutBtn);
 
-    panelRight.add(header);
+    // Search button action
+    searchBtn.addActionListener(e -> {
+      String accountNo = accountField.getText().trim();
+      if (accountNo.isEmpty()) {
+        JOptionPane.showMessageDialog(panel, "Please enter an account number", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+      }
+
+      boolean found = false;
+      try (BufferedReader br = new BufferedReader(new FileReader("accounts.csv"))) {
+        String line;
+        boolean firstLine = true;
+
+        while ((line = br.readLine()) != null) {
+          if (firstLine) {
+            firstLine = false;
+            continue; // Skip header row
+          }
+
+          String[] values = line.split(",");
+          if (values.length >= 5) {
+            String csvAccountNo = values[0].trim();
+            String name = values[1].trim();
+            String balance = values[2].trim();
+            String accountType = values[3].trim();
+            String accountExists = values[4].trim();
+
+            if (csvAccountNo.equals(accountNo) && accountExists.equalsIgnoreCase("TRUE")) {
+              nameLabel.setText(name);
+              balanceLabel.setText("$" + balance);
+              found = true;
+              break;
+            }
+          }
+        }
+      } catch (IOException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(panel, "Error loading accounts.csv file", "Error", JOptionPane.ERROR_MESSAGE);
+      }
+
+      if (!found) {
+        JOptionPane.showMessageDialog(panel, "Account not found", "Search Result", JOptionPane.WARNING_MESSAGE);
+        nameLabel.setText("");
+        balanceLabel.setText("$0.00");
+      }
+    });
+
+    // Transaction type button actions
+    depositBtn.addActionListener(e -> {
+      transactionFormPanel.setBorder(BorderFactory.createTitledBorder("Deposit"));
+      processBtn.setText("DEPOSIT");
+
+      amountPanel.removeAll(); // Ensure a fresh panel update
+      amountPanel.add(new JLabel("Deposit Amount:"));
+      amountPanel.add(amountField); // Always add amountField back
+      amountPanel.revalidate();
+      amountPanel.repaint();
+
+      destAccountPanel.setVisible(false);
+    });
+
+    withdrawBtn.addActionListener(e -> {
+      transactionFormPanel.setBorder(BorderFactory.createTitledBorder("Withdraw"));
+      processBtn.setText("WITHDRAW");
+
+      amountPanel.removeAll();
+      amountPanel.add(new JLabel("Withdraw Amount:"));
+      amountPanel.add(amountField);
+      amountPanel.revalidate();
+
+      destAccountPanel.setVisible(false);
+    });
+
+    transferBtn.addActionListener(e -> {
+      transactionFormPanel.setBorder(BorderFactory.createTitledBorder("Transfer"));
+      processBtn.setText("TRANSFER");
+
+      amountPanel.removeAll();
+      amountPanel.add(new JLabel("Transfer Amount:"));
+      amountPanel.add(amountField);
+      amountPanel.revalidate();
+
+      destAccountPanel.setVisible(true);
+    });
+
+    // Process button action
+    processBtn.addActionListener(e -> {
+      if (nameLabel.getText().isEmpty()) {
+        JOptionPane.showMessageDialog(panel,
+                "Please search for an account first",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+        return;
+      }
+
+      String amountText = amountField.getText();
+      try {
+        double amount = Double.parseDouble(amountText);
+        String transactionType = processBtn.getText();
+
+        // Here you would add your transaction processing logic
+        String message = transactionType + " of $" + amount + " processed for account " + accountField.getText();
+
+        if (transactionType.equals("TRANSFER")) {
+          message += " to account " + destAccountField.getText();
+        }
+
+        JOptionPane.showMessageDialog(panel,
+                message,
+                "Transaction Successful",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        // Clear fields after successful transaction
+        amountField.setText("");
+        destAccountField.setText("");
+      } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(panel,
+                "Please enter a valid amount",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+      }
+    });
+
+
     return panel;
+  }
+
+  private JButton createTransactionButton(String text) {
+    JButton button = new JButton(text);
+    button.setPreferredSize(new Dimension(120, 40));
+    button.setBackground(new Color(13, 161, 204));
+    button.setForeground(Color.WHITE);
+    button.setFont(new Font("Arial", Font.BOLD, 14));
+    return button;
   }
 
   private JPanel createTransactionHistoryPage(){
@@ -692,16 +926,127 @@ public class GUI extends JFrame{
     });
 
     JPanel panelRight = new JPanel();
-    panelRight.setSize(new Dimension(700, 600));
-    panelRight.setBackground(new Color(255, 255, 255));
-    panelRight.setBorder(BorderFactory.createEmptyBorder(50, 10, 200, 10));
-    panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
-
-    JLabel header = new JLabel("Create Account");
-    header.setFont(new Font("Arial", Font.BOLD, 36));
-    header.setAlignmentX(LEFT_ALIGNMENT);
+    panelRight.setBackground(Color.WHITE);
+    panelRight.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
 
+    JPanel headerPanel = new JPanel(new BorderLayout());
+    headerPanel.setBackground(Color.WHITE);
+
+    JLabel historyLabel = new JLabel("Transaction History");
+    historyLabel.setFont(new Font("Arial", Font.BOLD, 26));
+    headerPanel.add(historyLabel, BorderLayout.WEST);
+
+    JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    rightHeaderPanel.setBackground(Color.WHITE);
+
+    JLabel totalLabel = new JLabel("TOTAL: 0");
+    totalLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+    rightHeaderPanel.add(totalLabel);
+
+    JLabel dateTimeLabel = new JLabel("", SwingConstants.RIGHT);
+    dateTimeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+    rightHeaderPanel.add(dateTimeLabel);
+
+    headerPanel.add(rightHeaderPanel, BorderLayout.CENTER);
+    panelRight.add(headerPanel, BorderLayout.NORTH);
+
+// Transaction Table Setup
+    String[] columnNames = {"Account No", "Name", "Type", "Amount", "Date"};
+    DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+      @Override
+      public boolean isCellEditable(int row, int column) {
+        return false;
+      }
+    };
+
+// Load data from CSV
+    try (BufferedReader br = new BufferedReader(new FileReader("transactions.csv"))) {
+      String line;
+      boolean firstLine = true;
+
+      while ((line = br.readLine()) != null) {
+        if (firstLine) {
+          firstLine = false;
+          continue; // Skip header
+        }
+
+        String[] values = line.split(",");
+        if (values.length >= 5) { // Ensure valid row
+          String accountNo = values[0].trim();
+          String name = values[1].trim();
+          String type = values[2].trim();
+          String amount = values[3].trim();
+          String date = values[4].trim();
+
+          model.addRow(new Object[]{accountNo, name, type, amount, date});
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Error loading transaction history from CSV", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+// Table Display
+    JTable historyTable = new JTable(model);
+    historyTable.setFont(new Font("Arial", Font.PLAIN, 14));
+    historyTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+    historyTable.setRowHeight(25);
+
+    JScrollPane scrollPane = new JScrollPane(historyTable);
+    panelRight.add(scrollPane, BorderLayout.CENTER);
+
+// Update transaction count dynamically
+    totalLabel.setText("TOTAL: " + model.getRowCount());
+
+    // Create a Refresh button
+    JButton refreshBtn = new JButton("Refresh");
+    refreshBtn.setBackground(new Color(13, 161, 204));
+    refreshBtn.setForeground(Color.WHITE);
+    refreshBtn.setFont(new Font("Arial", Font.BOLD, 14));
+
+// Add refresh button action listener
+    refreshBtn.addActionListener(e -> {
+      // Clear existing table data
+      model.setRowCount(0);
+
+      // Reload data from CSV file
+      try (BufferedReader br = new BufferedReader(new FileReader("transactions.csv"))) {
+        String line;
+        boolean firstLine = true;
+
+        while ((line = br.readLine()) != null) {
+          if (firstLine) {
+            firstLine = false;
+            continue; // Skip header
+          }
+
+          String[] values = line.split(",");
+          if (values.length >= 5) { // Ensure valid row
+            String accountNo = values[0].trim();
+            String name = values[1].trim();
+            String type = values[2].trim();
+            String amount = values[3].trim();
+            String date = values[4].trim();
+
+            model.addRow(new Object[]{accountNo, name, type, amount, date});
+          }
+        }
+      } catch (IOException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error loading transaction history from CSV", "Error", JOptionPane.ERROR_MESSAGE);
+      }
+
+      // Update total count dynamically after refresh
+      totalLabel.setText("TOTAL: " + model.getRowCount());
+    });
+
+// Add Refresh button below the table
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    buttonPanel.setBackground(Color.WHITE);
+    buttonPanel.add(refreshBtn);
+
+    panelRight.add(buttonPanel, BorderLayout.SOUTH);
 
 
 
@@ -716,7 +1061,6 @@ public class GUI extends JFrame{
     panelLeft.add(addCustomerBtn);
     panelLeft.add(logOutBtn, BorderLayout.SOUTH);
 
-    panelRight.add(header);
     return panel;
   }
 
@@ -778,16 +1122,113 @@ public class GUI extends JFrame{
     panelRight.setBorder(BorderFactory.createEmptyBorder(50, 10, 200, 10));
     panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
 
-    JLabel header = new JLabel("Create Account");
-    header.setFont(new Font("Arial", Font.BOLD, 36));
-    header.setAlignmentX(LEFT_ALIGNMENT);
+    JLabel greeting = new JLabel("Create Account");
+    greeting.setFont(new Font("Arial", Font.BOLD, 36));
+    greeting.setAlignmentX(CENTER_ALIGNMENT);
+
+    //USERNAME
+    JLabel accountNumber = new JLabel("Bank Account:");
+    accountNumber.setFont(new Font("Arial", Font.BOLD, 18));
+    accountNumber.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 200));
+
+
+    JPanel accNumPanel = new JPanel();
+    accNumPanel.setBackground(new Color(255, 255, 255));
+    accNumPanel.setPreferredSize(new Dimension(700, 50));
+    accNumPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0 ,50));
+
+    //USERNAME TEXTFIELD
+    JTextField inputAccNumber = new JTextField(20);
+    inputAccNumber.setFont(new Font("Arial", Font.PLAIN, 18));
+    accNumPanel.add(inputAccNumber);
 
 
 
+    JLabel accountPasswd = new JLabel("Password:");
+    accountPasswd.setFont(new Font("Arial", Font.BOLD, 18));
+    accountPasswd.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 323));
 
+    JPanel accPassPanel = new JPanel();
+    accPassPanel.setBackground(new Color(255, 255, 255));
+    accPassPanel.setSize(new Dimension(700, 90));
+    accPassPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0 ,50));
+
+    JTextField inputAccPasswd= new JTextField(20);
+    inputAccPasswd.setFont(new Font("Arial", Font.PLAIN, 18));
+    accPassPanel.add(inputAccPasswd);
+
+    JLabel accountBalance = new JLabel("Balance:");
+    accountBalance.setFont(new Font("Arial", Font.BOLD, 18));
+    accountBalance.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 323));
+
+    JPanel accBalancePanel = new JPanel();
+    accBalancePanel.setBackground(new Color(255, 255, 255));
+    accBalancePanel.setSize(new Dimension(700, 90));
+    accBalancePanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0 ,50));
+
+    JTextField inputAccBalance= new JTextField(20);
+    inputAccBalance.setFont(new Font("Arial", Font.PLAIN, 18));
+    accBalancePanel.add(inputAccBalance);
+
+    JLabel accountTypeLabel = new JLabel("Account Type:");
+    accountTypeLabel.setFont(new Font("Arial", Font.BOLD, 18));
+    accountTypeLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 323));
+
+    JPanel accTypePanel = new JPanel();
+    accTypePanel.setBackground(Color.WHITE);
+    accTypePanel.setSize(new Dimension(700, 90));
+    accTypePanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20, 50));
+
+    String[] accountTypes = {"Regular", "Investment"};
+    JComboBox<String> accountTypeComboBox = new JComboBox<>(accountTypes);
+    accountTypeComboBox.setFont(new Font("Arial", Font.PLAIN, 18));
+    accTypePanel.add(accountTypeComboBox);
+
+    JPanel signInPanel = new JPanel();
+    signInPanel.setBackground(new Color(255, 255, 255));
+    signInPanel.setSize(new Dimension(700, 90));
+    signInPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20 ,50));
+
+    JButton signInBtn = new JButton("Create");
+    signInBtn.setPreferredSize(new Dimension(100, 40));
+    signInBtn.setFont(new Font("Arial", Font.BOLD, 16));
+    signInBtn.setBackground(new Color(13, 161, 204));
+    signInBtn.setForeground(new Color(255, 255, 255));
+    signInBtn.addActionListener(e -> {
+      String accountNo = inputAccNumber.getText().trim();
+      String password = inputAccPasswd.getText().trim();
+      String balance = inputAccBalance.getText().trim();
+      String accountType = accountTypeComboBox.getSelectedItem().toString(); // Get selected account type
+
+      if (accountNo.isEmpty() || password.isEmpty() || balance.isEmpty()) {
+        JOptionPane.showMessageDialog(panel, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+      }
+
+      // Append new customer to CSV
+      try (FileWriter fw = new FileWriter("accounts.csv", true);
+           BufferedWriter bw = new BufferedWriter(fw);
+           PrintWriter pw = new PrintWriter(bw)) {
+
+        pw.println(accountNo + "," + password + "," + balance + "," + accountType + ",TRUE");
+        JOptionPane.showMessageDialog(panel, "Account created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+        // Clear input fields after successful creation
+        inputAccNumber.setText("");
+        inputAccPasswd.setText("");
+        inputAccBalance.setText("");
+        accountTypeComboBox.setSelectedIndex(0); // Reset selection
+
+      } catch (IOException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(panel, "Error writing to accounts.csv", "Error", JOptionPane.ERROR_MESSAGE);
+      }
+    });
+
+    signInPanel.add(signInBtn);
 
     panel.add(panelLeft, BorderLayout.WEST);
-    panel.add(panelRight, BorderLayout.CENTER);
+    panel.add(panelRight,BorderLayout.CENTER);
 
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
@@ -797,7 +1238,16 @@ public class GUI extends JFrame{
     panelLeft.add(addCustomerBtn);
     panelLeft.add(logOutBtn, BorderLayout.SOUTH);
 
-    panelRight.add(header);
+    panelRight.add(greeting);
+    panelRight.add(accountNumber);
+    panelRight.add(accNumPanel);
+    panelRight.add(accountPasswd);
+    panelRight.add(accPassPanel);
+    panelRight.add(accountBalance);
+    panelRight.add(accBalancePanel);
+    panelRight.add(accountTypeLabel);
+    panelRight.add(accTypePanel);
+    panelRight.add(signInPanel);
     return panel;
   }
 
