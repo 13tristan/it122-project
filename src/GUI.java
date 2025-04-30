@@ -1224,7 +1224,6 @@ public class GUI extends JFrame{
         JOptionPane.showMessageDialog(panel, "Error writing to accounts.csv", "Error", JOptionPane.ERROR_MESSAGE);
       }
     });
-
     signInPanel.add(signInBtn);
 
     panel.add(panelLeft, BorderLayout.WEST);
