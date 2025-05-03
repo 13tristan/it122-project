@@ -1,3 +1,5 @@
-accountNumber,name,password,balance,accountType,active
+AccountNumber,Name,Password,Balance,AccountType,IsActive
 868506,nigga,123,1.0000245E7,Regular,true
 859306,diwatapares,nigga,12345.0,Regular,true
+915603,Jade,234,20000.0,Regular,true
+648294,Beabadoobee,2525,10000.0,Investment,true
