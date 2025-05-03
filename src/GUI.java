@@ -394,46 +394,9 @@ public class GUI extends JFrame{
     JPanel tablePanel = new JPanel(new BorderLayout());
     tablePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
-    // Table Data - Removed Balance column
-    String[] columnNames = {"Acc. No", "Name", "Acc. Type"};
-    DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
-      @Override
-      public boolean isCellEditable(int row, int column) {
-        return false;
-      }
-    };
 
-    // Load data from CSV
-    try (BufferedReader br = new BufferedReader(new FileReader("accounts.csv"))) {
-      String line;
-      boolean firstLine = true;
 
-      while ((line = br.readLine()) != null) {
-        if (firstLine) {
-          firstLine = false;
-          continue; // Skip header
-        }
-
-        String[] values = line.split(",");
-        if (values.length >= 4) {
-          String accountNumber = values[0].trim();
-          String name = values[1].trim();
-          String accountType = values[3].trim();
-
-          // Add data without balance to the table
-          model.addRow(new Object[]{
-                  accountNumber,
-                  name,
-                  accountType
-          });
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-      JOptionPane.showMessageDialog(null, "Error loading customer data from CSV", "Error", JOptionPane.ERROR_MESSAGE);
-    } catch (NumberFormatException e) {
-      JOptionPane.showMessageDialog(null, "Error parsing balance amounts", "Data Error", JOptionPane.ERROR_MESSAGE);
-    }
+    loadAccountsFromCsv();
 
     JTable customerTable = new JTable(model);
     customerTable.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -1278,12 +1241,54 @@ public class GUI extends JFrame{
               account.getBalance() + "," +
               account.getAccountType() + "," +
               account.isActive());
-      writer.newLine();
     } catch (IOException e) {
       e.printStackTrace();
       JOptionPane.showMessageDialog(null, "Error saving account to CSV!");
     }
   }
+
+  public void loadAccountsFromCsv() {
+    // Load data from CSV
+    try (BufferedReader br = new BufferedReader(new FileReader("accounts.csv"))) {
+      String line;
+      boolean firstLine = true;
+
+      while ((line = br.readLine()) != null) {
+        if (firstLine) {
+          firstLine = false;
+          continue; // Skip header
+        }
+
+        String[] values = line.split(",");
+        if (values.length >= 4) {
+          String accountNumber = values[0].trim();
+          String name = values[1].trim();
+          String accountType = values[3].trim();
+
+          // Add data without balance to the table
+          model.addRow(new Object[]{
+                  accountNumber,
+                  name,
+                  accountType
+          });
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Error loading customer data from CSV", "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (NumberFormatException e) {
+      JOptionPane.showMessageDialog(null, "Error parsing balance amounts", "Data Error", JOptionPane.ERROR_MESSAGE);
+    }
+  }
+
+  // Table Data - Removed Balance column
+  String[] columnNames = {"Acc. No", "Name", "Acc. Type"};
+  DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+    @Override
+    public boolean isCellEditable(int row, int column) {
+      return false;
+    }
+  };
 
 
 }
