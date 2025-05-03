@@ -394,8 +394,8 @@ public class GUI extends JFrame{
     JPanel tablePanel = new JPanel(new BorderLayout());
     tablePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
-    // Table Data
-    String[] columnNames = {"Account No", "Name", "Account Type", "Balance"};
+    // Table Data - Removed Balance column
+    String[] columnNames = {"Acc. No", "Name", "Acc. Type"};
     DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
       @Override
       public boolean isCellEditable(int row, int column) {
@@ -418,15 +418,13 @@ public class GUI extends JFrame{
         if (values.length >= 4) {
           String accountNumber = values[0].trim();
           String name = values[1].trim();
-          double balance = Double.parseDouble(values[2].trim());
           String accountType = values[3].trim();
 
-          // Add formatted balance to the table
+          // Add data without balance to the table
           model.addRow(new Object[]{
                   accountNumber,
                   name,
-                  accountType,
-                  String.format("$%,.2f", balance) // Formatted as currency
+                  accountType
           });
         }
       }
@@ -475,7 +473,7 @@ public class GUI extends JFrame{
     accountTypePanel.add(accountTypeValue);
     accountProfilePanel.add(accountTypePanel);
 
-    // Balance
+    // Balance (kept in profile but removed from table)
     JPanel balancePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     balancePanel.add(new JLabel("Balance Amount:"));
     JLabel balanceValue = new JLabel("");
@@ -509,7 +507,7 @@ public class GUI extends JFrame{
     });
     timer.start();
 
-    // Search Functionality
+    // Search Functionality - updated to handle new column indices
     searchBtn.addActionListener(e -> {
       String searchText = searchInput.getText().trim();
       if (searchText.isEmpty()) {
@@ -523,11 +521,30 @@ public class GUI extends JFrame{
           customerTable.setRowSelectionInterval(i, i);
           customerTable.scrollRectToVisible(customerTable.getCellRect(i, 0, true));
 
-          // Update account profile - balance is now column 3
+          // Update account profile
           accountIdValue.setText(model.getValueAt(i, 0).toString());
           accountNameValue.setText(model.getValueAt(i, 1).toString());
           accountTypeValue.setText(model.getValueAt(i, 2).toString());
-          balanceValue.setText(model.getValueAt(i, 3).toString()); // This is the balance
+
+          // For balance, we need to read it from the CSV again since it's not in the table
+          try (BufferedReader br = new BufferedReader(new FileReader("accounts.csv"))) {
+            String line;
+            boolean firstLine = true;
+            while ((line = br.readLine()) != null) {
+              if (firstLine) {
+                firstLine = false;
+                continue;
+              }
+              String[] values = line.split(",");
+              if (values.length >= 4 && values[0].trim().equals(searchText)) {
+                double balance = Double.parseDouble(values[2].trim());
+                balanceValue.setText(String.format("$%,.2f", balance));
+                break;
+              }
+            }
+          } catch (Exception ex) {
+            balanceValue.setText("N/A");
+          }
 
           found = true;
           break;
