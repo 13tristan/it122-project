@@ -20,11 +20,17 @@ public class BankAccount {
   private static Set<Integer> generatedAccountNumbers = new HashSet<>(); // To track used account numbers
 
   // Constructor to initialize account with name, balance, and account type
-  public BankAccount(String name, String password ,double balance, String accountType) {
+  public BankAccount( String name, String password ,double balance, String accountType) {
+    this.accountNumber = generateUniqueAccountNumber();
     this.name = name;
+    this.password = password;
     this.balance = balance;
     this.accountType = accountType;
-    this.password = password;
+
+  }
+  public void setAccountNumber(int accountNumber) {
+    this.accountNumber = accountNumber;
+    generatedAccountNumbers.add(accountNumber); // Add to used numbers
   }
 
   // Getter for account name
@@ -39,7 +45,7 @@ public class BankAccount {
 
   // Getter for account number
   public int getAccountNumber() {
-    return generateUniqueAccountNumber();
+    return this.accountNumber;
   }
 
   // Getter for account type
@@ -62,6 +68,11 @@ public class BankAccount {
     generatedAccountNumbers.add(generatedNumber); // Add the number to the set
     return generatedNumber;
   }
+
+  public void setActive(boolean isActive) {
+    this.isActive = isActive;
+  }
+
 
   public boolean isActive() {
     return isActive;
