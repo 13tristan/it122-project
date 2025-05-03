@@ -1206,42 +1206,13 @@ public class GUI extends JFrame{
     signInPanel.setSize(new Dimension(700, 90));
     signInPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20 ,50));
 
-    JButton signInBtn = new JButton("Create");
-    signInBtn.setPreferredSize(new Dimension(100, 40));
-    signInBtn.setFont(new Font("Arial", Font.BOLD, 16));
-    signInBtn.setBackground(new Color(13, 161, 204));
-    signInBtn.setForeground(new Color(255, 255, 255));
-    signInBtn.addActionListener(e -> {
-      String accountNo = inputAccNumber.getText().trim();
-      String password = inputAccPasswd.getText().trim();
-      String balance = inputAccBalance.getText().trim();
-      String accountType = accountTypeComboBox.getSelectedItem().toString(); // Get selected account type
-
-      if (accountNo.isEmpty() || password.isEmpty() || balance.isEmpty()) {
-        JOptionPane.showMessageDialog(panel, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-      }
-
-      // Append new customer to CSV
-      try (FileWriter fw = new FileWriter("accounts.csv", true);
-           BufferedWriter bw = new BufferedWriter(fw);
-           PrintWriter pw = new PrintWriter(bw)) {
-
-        pw.println(accountNo + "," + password + "," + balance + "," + accountType + ",TRUE");
-        JOptionPane.showMessageDialog(panel, "Account created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-
-        // Clear input fields after successful creation
-        inputAccNumber.setText("");
-        inputAccPasswd.setText("");
-        inputAccBalance.setText("");
-        accountTypeComboBox.setSelectedIndex(0); // Reset selection
-
-      } catch (IOException ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(panel, "Error writing to accounts.csv", "Error", JOptionPane.ERROR_MESSAGE);
-      }
-    });
-    signInPanel.add(signInBtn);
+    JButton createAcctBtn = new JButton("Create");
+    createAcctBtn.setPreferredSize(new Dimension(100, 40));
+    createAcctBtn.setFont(new Font("Arial", Font.BOLD, 16));
+    createAcctBtn.setBackground(new Color(13, 161, 204));
+    createAcctBtn.setForeground(new Color(255, 255, 255));
+    createAcctBtn.addActionListener(e -> handleCreateAccount(inputAccBalance, inputAccNumber, inputAccPasswd, accountTypeComboBox));
+    signInPanel.add(createAcctBtn);
 
     panel.add(panelLeft, BorderLayout.WEST);
     panel.add(panelRight,BorderLayout.CENTER);
@@ -1267,16 +1238,52 @@ public class GUI extends JFrame{
     return panel;
   }
 
+  private void handleCreateAccount(JTextField inputAccBalance, JTextField inputAccNumber, JTextField inputAccPasswd, JComboBox<String> accountTypeComboBox) {
+    String accountNo = inputAccNumber.getText().trim();
+    String password = inputAccPasswd.getText().trim();
+    String balanceStr = inputAccBalance.getText().trim();
+    String accountType = accountTypeComboBox.getSelectedItem().toString();
 
-  // Save account data to a CSV file
+    if (accountNo.isEmpty() || password.isEmpty() || balanceStr.isEmpty()) {
+      JOptionPane.showMessageDialog(null, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+
+    try {
+      double balance = Double.parseDouble(balanceStr);
+
+      BankAccount newAccount = new BankAccount(accountNo, password, balance, accountType);
+      addAccountToCSV(newAccount);
+
+      JOptionPane.showMessageDialog(null, "Account created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+      inputAccNumber.setText("");
+      inputAccPasswd.setText("");
+      inputAccBalance.setText("");
+      accountTypeComboBox.setSelectedIndex(0);
+
+    } catch (NumberFormatException e) {
+      JOptionPane.showMessageDialog(null, "Invalid balance format", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+  }
+
+
+
   private void addAccountToCSV(BankAccount account) {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter("accounts.csv", true))) {
-      writer.write(account.generateAccountNumber() + "," + account.getName() + "," + account.getBalance());
+      writer.write(
+              account.getAccountNumber() + "," +
+              account.getName() + "," +
+              account.getPassword() + "," +
+              account.getBalance() + "," +
+              account.getAccountType() + "," +
+              account.isActive());
       writer.newLine();
     } catch (IOException e) {
       e.printStackTrace();
       JOptionPane.showMessageDialog(null, "Error saving account to CSV!");
     }
   }
+
 
 }
