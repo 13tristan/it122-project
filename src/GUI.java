@@ -405,22 +405,10 @@ public class GUI extends JFrame{
         return;
       }
 
-      int confirm = JOptionPane.showConfirmDialog(panel,
-              "Are you sure you want to close account " + accountIdValue.getText() + "?",
-              "Confirm Account Closure",
-              JOptionPane.YES_NO_OPTION);
-
-      if (confirm == JOptionPane.YES_OPTION) {
-        // Here you would add your account closure logic
-        JOptionPane.showMessageDialog(panel, "Account " + accountIdValue.getText() + " closed");
-        accountIdValue.setText("");
-        accountNameValue.setText("");
-        accountTypeValue.setText("");
-        balanceValue.setText("");
-        passwordValue.setText("");
-        statusValue.setText("");
-      }
+AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNameValue, accountTypeValue,
+        balanceValue, passwordValue, statusValue);
     });
+
 
     // Add panels to main panel
     panel.add(panelLeft, BorderLayout.WEST);
