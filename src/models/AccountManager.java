@@ -1,6 +1,5 @@
-import models.BankAccount;
+package models;
 
-import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,32 +116,49 @@ public class AccountManager {
             return;
         }
 
+        String accountId = accountIdValue.getText();
+        File inputFile = new File("accounts.csv");
+        List<String> updatedLines = new ArrayList<>();
+        boolean accountFound = false;
+        boolean alreadyClosed = false;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split(",");
+                if (fields.length > 0 && fields[0].equals(accountId)) {
+                    accountFound = true;
+                    if (fields.length > 5 && fields[5].equalsIgnoreCase("false")) {
+                        alreadyClosed = true;
+                    } else {
+                        // Mark account as closed
+                        fields[5] = "false";
+                        line = String.join(",", fields);
+                    }
+                }
+                updatedLines.add(line);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(panel, "Error reading file: " + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!accountFound) {
+            JOptionPane.showMessageDialog(panel, "Account not found", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (alreadyClosed) {
+            JOptionPane.showMessageDialog(panel, "Account is already closed", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         int confirm = JOptionPane.showConfirmDialog(panel,
-                "Are you sure you want to close account " + accountIdValue.getText() + "?",
+                "Are you sure you want to close account " + accountId + "?",
                 "Confirm Account Closure",
                 JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            String accountId = accountIdValue.getText();
-            File inputFile = new File("accounts.csv");
-            List<String> updatedLines = new ArrayList<>();
-
-            try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] fields = line.split(",");
-                    if (fields.length > 0 && fields[0].equals(accountId)) {
-                        // Set status to false (assuming status is at index 5)
-                        fields[5] = "false";
-                        line = String.join(",", fields);
-                    }
-                    updatedLines.add(line);
-                }
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(panel, "Error reading file: " + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile))) {
                 for (String updatedLine : updatedLines) {
                     writer.write(updatedLine);
@@ -163,6 +179,7 @@ public class AccountManager {
             statusValue.setText("");
         }
     }
+
 
 
 }
