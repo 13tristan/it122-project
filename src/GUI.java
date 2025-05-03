@@ -813,20 +813,20 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     greeting.setAlignmentX(CENTER_ALIGNMENT);
 
     //USERNAME
-    JLabel accountNumber = new JLabel("Bank Account:");
-    accountNumber.setFont(new Font("Arial", Font.BOLD, 18));
-    accountNumber.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 200));
+    JLabel accountName = new JLabel("Bank Name:");
+    accountName.setFont(new Font("Arial", Font.BOLD, 18));
+    accountName.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 200));
 
 
-    JPanel accNumPanel = new JPanel();
-    accNumPanel.setBackground(new Color(255, 255, 255));
-    accNumPanel.setPreferredSize(new Dimension(700, 50));
-    accNumPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0 ,50));
+    JPanel accNamePanel = new JPanel();
+    accNamePanel.setBackground(new Color(255, 255, 255));
+    accNamePanel.setPreferredSize(new Dimension(700, 50));
+    accNamePanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0 ,50));
 
     //USERNAME TEXTFIELD
-    JTextField inputAccNumber = new JTextField(20);
-    inputAccNumber.setFont(new Font("Arial", Font.PLAIN, 18));
-    accNumPanel.add(inputAccNumber);
+    JTextField inputAccName = new JTextField(20);
+    inputAccName.setFont(new Font("Arial", Font.PLAIN, 18));
+    accNamePanel.add(inputAccName);
 
 
 
@@ -880,7 +880,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     createAcctBtn.setFont(new Font("Arial", Font.BOLD, 16));
     createAcctBtn.setBackground(new Color(13, 161, 204));
     createAcctBtn.setForeground(new Color(255, 255, 255));
-    createAcctBtn.addActionListener(e -> handleCreateAccount(inputAccBalance, inputAccNumber, inputAccPasswd, accountTypeComboBox));
+    createAcctBtn.addActionListener(e -> handleCreateAccount(inputAccBalance, inputAccName, inputAccPasswd, accountTypeComboBox));
     signInPanel.add(createAcctBtn);
 
     panel.add(panelLeft, BorderLayout.WEST);
@@ -888,8 +888,8 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
 
     panelRight.add(greeting);
-    panelRight.add(accountNumber);
-    panelRight.add(accNumPanel);
+    panelRight.add(accountName);
+    panelRight.add(accNamePanel);
     panelRight.add(accountPasswd);
     panelRight.add(accPassPanel);
     panelRight.add(accountBalance);
@@ -900,9 +900,9 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     return panel;
   }
 
-  private void handleCreateAccount(JTextField inputAccBalance, JTextField inputAccNumber,
+  private void handleCreateAccount(JTextField inputAccBalance, JTextField inputAccName,
                                    JTextField inputAccPasswd, JComboBox<String> accountTypeComboBox) {
-    String name = inputAccNumber.getText().trim(); // Assuming this is actually the name field
+    String name = inputAccName.getText().trim(); // Assuming this is actually the name field
     String password = inputAccPasswd.getText().trim();
     String balanceStr = inputAccBalance.getText().trim();
     String accountType = accountTypeComboBox.getSelectedItem().toString();
@@ -921,7 +921,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
       JOptionPane.showMessageDialog(null, "Account created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
 
-      inputAccNumber.setText("");
+      inputAccName.setText("");
       inputAccPasswd.setText("");
       inputAccBalance.setText("");
       accountTypeComboBox.setSelectedIndex(0);
