@@ -57,7 +57,7 @@ public class GUI extends JFrame{
     bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
     bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    JLabel bankSubtitle = new JLabel("Banking So Badass, It’s Bombanklat.");
+    JLabel bankSubtitle = new JLabel("Secure. Lit. Bombanklat.");
     bankSubtitle.setForeground(new Color(235, 241, 238));
     bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
     bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 130, 0));
@@ -951,7 +951,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
     bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    JLabel bankSubtitle = new JLabel("Banking So Badass, It’s Bombanklat.");
+    JLabel bankSubtitle = new JLabel("Secure. Lit. Bombanklat.");
     bankSubtitle.setForeground(Color.WHITE);
     bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
     bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
