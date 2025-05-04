@@ -351,7 +351,7 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable, I
         return true;
     }
 
-
+    @Override
     public void getTransactions(JLabel totalLabel , DefaultTableModel model) {
       model.setRowCount(0);
 // Load data from CSV
