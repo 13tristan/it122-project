@@ -23,6 +23,93 @@ public class AccountManager {
         this.tableModel = model;
     }
 
+    // Add this method to find an account by account number
+    public BankAccount findAccount(int accountNumber) {
+        for (BankAccount account : accounts) {
+            if (account.getAccountNumber() == accountNumber && account.isActive()) {
+                return account;
+            }
+        }
+        return null;
+    }
+
+    // Deposit method
+    public boolean deposit(int accountNumber, double amount) {
+        BankAccount account = findAccount(accountNumber);
+        if (account == null) {
+            return false;
+        }
+
+        try {
+            account.deposit((int) amount);
+            saveAccountsToCSV();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // Withdraw method
+    public boolean withdraw(int accountNumber, double amount) {
+        BankAccount account = findAccount(accountNumber);
+        if (account == null) {
+            return false;
+        }
+
+        try {
+            account.withdraw((int) amount);
+            saveAccountsToCSV();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // Transfer method
+    public boolean transfer(int fromAccountNumber, int toAccountNumber, double amount) {
+        BankAccount fromAccount = findAccount(fromAccountNumber);
+        BankAccount toAccount = findAccount(toAccountNumber);
+
+        if (fromAccount == null || toAccount == null) {
+            return false;
+        }
+
+        try {
+            // First withdraw from source account
+            fromAccount.withdraw((int) amount);
+            // Then deposit to destination account
+            toAccount.deposit((int) amount);
+            saveAccountsToCSV();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // Add this method to record transactions
+    public void recordTransaction(int accountNumber, String transactionType, double amount, String targetAccount) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transactions.csv", true))) {
+            BankAccount account = findAccount(accountNumber);
+            if (account == null) return;
+
+            String transactionRecord = String.format("%d,%s,%s,%.2f,%s",
+                    accountNumber,
+                    account.getName(),
+                    transactionType,
+                    amount,
+                    java.time.LocalDateTime.now().toString());
+
+            if (targetAccount != null) {
+                transactionRecord += "," + targetAccount;
+            }
+
+            writer.write(transactionRecord);
+            writer.newLine();
+        } catch (IOException e) {
+            System.err.println("Error recording transaction: " + e.getMessage());
+        }
+    }
+
     public void addAccount(BankAccount account) {
         accounts.add(account);
         if (tableModel != null) {
