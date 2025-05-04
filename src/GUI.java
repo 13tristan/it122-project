@@ -356,8 +356,9 @@ public class GUI extends JFrame{
         while ((line = br.readLine()) != null) {
           if (firstLine) {
             firstLine = false;
-            continue;
+            continue; // Skip header row
           }
+
           String[] values = line.split(",");
           if (values.length >= 6 && values[0].trim().equals(searchText)) {
             // Update all profile fields
@@ -365,8 +366,8 @@ public class GUI extends JFrame{
             accountNameValue.setText(values[1].trim());
             accountTypeValue.setText(values[4].trim());
             balanceValue.setText(String.format("$%,.2f", Double.parseDouble(values[3].trim())));
-            passwordValue.setText(values[2].trim()); // Password
-            statusValue.setText(Boolean.parseBoolean(values[5].trim()) ? "Active" : "Inactive"); // Status
+            passwordValue.setText(values[2].trim());
+            statusValue.setText(Boolean.parseBoolean(values[5].trim()) ? "Active" : "Inactive");
 
             // Highlight in table
             for (int i = 0; i < model.getRowCount(); i++) {
@@ -622,25 +623,57 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
       try {
         double amount = Double.parseDouble(amountText);
         String transactionType = processBtn.getText();
+        AccountManager accountManager = AccountManager.getInstance();
+        int accountNumber = Integer.parseInt(accountField.getText());
+        boolean success = false;
+        String message = "";
 
-        // Here you would add your transaction processing logic
-        String message = transactionType + " of $" + amount + " processed for account " + accountField.getText();
-
-        if (transactionType.equals("TRANSFER")) {
-          message += " to account " + destAccountField.getText();
+        switch (transactionType) {
+          case "DEPOSIT":
+            success = accountManager.deposit(accountNumber, amount);
+            message = "Deposit of $" + amount + " to account " + accountNumber;
+            if (success) accountManager.recordTransaction(accountNumber, "DEPOSIT", amount, null);
+            break;
+          case "WITHDRAW":
+            success = accountManager.withdraw(accountNumber, amount);
+            message = "Withdrawal of $" + amount + " from account " + accountNumber;
+            if (success) accountManager.recordTransaction(accountNumber, "WITHDRAW", amount, null);
+            break;
+          case "TRANSFER":
+            int destAccount = Integer.parseInt(destAccountField.getText());
+            success = accountManager.transfer(accountNumber, destAccount, amount);
+            message = "Transfer of $" + amount + " from account " + accountNumber + " to account " + destAccount;
+            if (success) {
+              accountManager.recordTransaction(accountNumber, "TRANSFER_OUT", amount, String.valueOf(destAccount));
+              accountManager.recordTransaction(destAccount, "TRANSFER_IN", amount, String.valueOf(accountNumber));
+            }
+            break;
         }
 
-        JOptionPane.showMessageDialog(panel,
-                message,
-                "Transaction Successful",
-                JOptionPane.INFORMATION_MESSAGE);
+        if (success) {
+          JOptionPane.showMessageDialog(panel,
+                  message + " completed successfully!",
+                  "Transaction Successful",
+                  JOptionPane.INFORMATION_MESSAGE);
 
-        // Clear fields after successful transaction
-        amountField.setText("");
-        destAccountField.setText("");
+          // Update balance display
+          BankAccount account = accountManager.findAccount(accountNumber);
+          if (account != null) {
+            balanceLabel.setText("$" + account.getBalance());
+          }
+
+          // Clear fields
+          amountField.setText("");
+          destAccountField.setText("");
+        } else {
+          JOptionPane.showMessageDialog(panel,
+                  "Transaction failed. Please check account details and balance.",
+                  "Transaction Failed",
+                  JOptionPane.ERROR_MESSAGE);
+        }
       } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(panel,
-                "Please enter a valid amount",
+                "Please enter valid account numbers and amount",
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
       }
