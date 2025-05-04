@@ -1,5 +1,9 @@
 package interfaces;
 
+import exceptions.InvalidAccountException;
+
+import javax.swing.*;
+
 public interface AccountVerifiable {
-  boolean verifyAccountDetails();
+  boolean verifyAccountDetails(JTextField username, JTextField password) throws InvalidAccountException;
 }

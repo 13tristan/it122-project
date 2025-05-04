@@ -1,6 +1,5 @@
 package interfaces;
 
 public interface TransactionLoggable {
-  void logTransaction(String transactionType, Double amount);
-  String getTransactionHistory();
+  void logTransaction(int accountNumber, String transactionType, double amount, String targetAccount);
 }
