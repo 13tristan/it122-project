@@ -609,7 +609,6 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
             success = true;
             break;
           case "TRANSFER":
-            System.out.println("test");
             if (destAccountField.getText().isEmpty()) {
               throw new InvalidAccountException("Please enter destination account");
             }
