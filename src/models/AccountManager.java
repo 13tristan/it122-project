@@ -3,6 +3,7 @@ package models;
 import exceptions.GlobalExceptionHandler;
 import exceptions.InvalidAccountException;
 import interfaces.AccountVerifiable;
+import interfaces.InterestBearing;
 import interfaces.TransactionLoggable;
 
 import java.io.*;
@@ -11,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-public class AccountManager implements TransactionLoggable, AccountVerifiable {
+public class AccountManager implements TransactionLoggable, AccountVerifiable, InterestBearing {
     private String username = "admin ";
     private String password = "admin123";
     private static AccountManager instance;
@@ -329,6 +330,7 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable {
     }
 
     // In AccountManager.java
+    @Override
     public boolean verifyAccountDetails(JTextField passwordField, JTextField usernameField)
             throws InvalidAccountException {
 
@@ -349,4 +351,47 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable {
         return true;
     }
 
+    @Override
+    public void getTransactions(JLabel totalLabel , DefaultTableModel model) {
+      model.setRowCount(0);
+// Load data from CSV
+      try (BufferedReader br = new BufferedReader(new FileReader("transactions.csv"))) {
+        String line;
+        boolean firstLine = true;
+
+        while ((line = br.readLine()) != null) {
+          if (firstLine) {
+            firstLine = false;
+            continue; // Skip header
+          }
+
+          String[] values = line.split(",");
+          if (values.length >= 5) { // Ensure valid row
+            String accountNo = values[0].trim();
+            String name = values[1].trim();
+            String type = values[2].trim();
+            String amount = values[3].trim();
+            String date = values[4].trim();
+
+            model.addRow(new Object[]{accountNo, name, type, amount, date});
+          }
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error loading transaction history from CSV", "Error", JOptionPane.ERROR_MESSAGE);
+      }
+
+      totalLabel.setText("TOTAL: " + model.getRowCount());
+    }
+
+
+  @Override
+  public double calculateInterest() {
+    return 0;
+  }
+
+  @Override
+  public void applyInterest() {
+
+  }
 }

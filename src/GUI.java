@@ -707,7 +707,6 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     headerPanel.add(rightHeaderPanel, BorderLayout.CENTER);
     panelRight.add(headerPanel, BorderLayout.NORTH);
 
-// Transaction Table Setup
     String[] columnNames = {"Account No", "Name", "Type", "Amount", "Date"};
     DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
       @Override
@@ -716,34 +715,10 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
       }
     };
 
-// Load data from CSV
-    try (BufferedReader br = new BufferedReader(new FileReader("transactions.csv"))) {
-      String line;
-      boolean firstLine = true;
+    AccountManager.getInstance().getTransactions(totalLabel, model);
 
-      while ((line = br.readLine()) != null) {
-        if (firstLine) {
-          firstLine = false;
-          continue; // Skip header
-        }
 
-        String[] values = line.split(",");
-        if (values.length >= 5) { // Ensure valid row
-          String accountNo = values[0].trim();
-          String name = values[1].trim();
-          String type = values[2].trim();
-          String amount = values[3].trim();
-          String date = values[4].trim();
-
-          model.addRow(new Object[]{accountNo, name, type, amount, date});
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-      JOptionPane.showMessageDialog(null, "Error loading transaction history from CSV", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-// Table Display
+    // Table Display
     JTable historyTable = new JTable(model);
     historyTable.setFont(new Font("Arial", Font.PLAIN, 14));
     historyTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
@@ -752,8 +727,6 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     JScrollPane scrollPane = new JScrollPane(historyTable);
     panelRight.add(scrollPane, BorderLayout.CENTER);
 
-// Update transaction count dynamically
-    totalLabel.setText("TOTAL: " + model.getRowCount());
 
     // Create a Refresh button
     JButton refreshBtn = new JButton("Refresh");
@@ -763,38 +736,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
 // Add refresh button action listener
     refreshBtn.addActionListener(e -> {
-      // Clear existing table data
-      model.setRowCount(0);
-
-      // Reload data from CSV file
-      try (BufferedReader br = new BufferedReader(new FileReader("transactions.csv"))) {
-        String line;
-        boolean firstLine = true;
-
-        while ((line = br.readLine()) != null) {
-          if (firstLine) {
-            firstLine = false;
-            continue; // Skip header
-          }
-
-          String[] values = line.split(",");
-          if (values.length >= 5) { // Ensure valid row
-            String accountNo = values[0].trim();
-            String name = values[1].trim();
-            String type = values[2].trim();
-            String amount = values[3].trim();
-            String date = values[4].trim();
-
-            model.addRow(new Object[]{accountNo, name, type, amount, date});
-          }
-        }
-      } catch (IOException ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error loading transaction history from CSV", "Error", JOptionPane.ERROR_MESSAGE);
-      }
-
-      // Update total count dynamically after refresh
-      totalLabel.setText("TOTAL: " + model.getRowCount());
+      AccountManager.getInstance().getTransactions(totalLabel, model);
     });
 
 // Add Refresh button below the table
