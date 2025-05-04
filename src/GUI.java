@@ -835,7 +835,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     accTypePanel.setSize(new Dimension(700, 90));
     accTypePanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20, 50));
 
-    String[] accountTypes = {"Regular", "Investment"};
+    String[] accountTypes = {"Checking", "Investment"};
     JComboBox<String> accountTypeComboBox = new JComboBox<>(accountTypes);
     accountTypeComboBox.setFont(new Font("Arial", Font.PLAIN, 18));
     accTypePanel.add(accountTypeComboBox);
