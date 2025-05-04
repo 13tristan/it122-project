@@ -526,49 +526,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
     // Search button action
     searchBtn.addActionListener(e -> {
-      String accountNo = accountField.getText().trim();
-      if (accountNo.isEmpty()) {
-        JOptionPane.showMessageDialog(panel, "Please enter an account number", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-      }
-
-      boolean found = false;
-      try (BufferedReader br = new BufferedReader(new FileReader("accounts.csv"))) {
-        String line;
-        boolean firstLine = true;
-
-        while ((line = br.readLine()) != null) {
-          if (firstLine) {
-            firstLine = false;
-            continue; // Skip header row
-          }
-
-          String[] values = line.split(",");
-          if (values.length >= 5) {
-            String csvAccountNo = values[0].trim();
-            String name = values[1].trim();
-            String balance = values[2].trim();
-            String accountType = values[3].trim();
-            String accountExists = values[4].trim();
-
-            if (csvAccountNo.equals(accountNo) && accountExists.equalsIgnoreCase("TRUE")) {
-              nameLabel.setText(name);
-              balanceLabel.setText("$" + balance);
-              found = true;
-              break;
-            }
-          }
-        }
-      } catch (IOException ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(panel, "Error loading accounts.csv file", "Error", JOptionPane.ERROR_MESSAGE);
-      }
-
-      if (!found) {
-        JOptionPane.showMessageDialog(panel, "Account not found", "Search Result", JOptionPane.WARNING_MESSAGE);
-        nameLabel.setText("");
-        balanceLabel.setText("$0.00");
-      }
+      AccountManager.getInstance().handleSearchAccount(panel,accountField,nameLabel,balanceLabel);
     });
 
     // Transaction type button actions

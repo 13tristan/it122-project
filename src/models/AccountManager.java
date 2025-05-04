@@ -268,5 +268,61 @@ public class AccountManager {
     }
 
 
+  public void handleSearchAccount(JPanel panel, JTextField accountIdValue, JLabel nameLabel, JLabel balanceLabel) {
+    String inputId = accountIdValue.getText().trim();
 
+    if (inputId.isEmpty()) {
+      JOptionPane.showMessageDialog(panel, "No account selected", "Error", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+
+    boolean found = false;
+
+    try (BufferedReader br = new BufferedReader(new FileReader("accounts.csv"))) {
+      String line;
+      boolean firstLine = true;
+
+      while ((line = br.readLine()) != null) {
+        if (firstLine) {
+          firstLine = false;
+          continue; // Skip header
+        }
+
+        String[] values = line.split(",");
+        if (values.length >= 6) {
+          String csvAccountNo = values[0].trim();
+          String name = values[1].trim();
+          String balance = values[3].trim();
+          String isActive = values[5].trim();
+
+
+
+          if (csvAccountNo.equals(inputId)) {
+
+            if (!isActive.equals("true")) {
+              JOptionPane.showMessageDialog(panel, "Account is not active", "Error", JOptionPane.ERROR_MESSAGE);
+              nameLabel.setText("");
+              balanceLabel.setText("$0.00");
+              return;
+            }
+
+
+            found = true;
+            nameLabel.setText(name);
+            balanceLabel.setText("$" + balance);
+            break;
+          }
+        }
+      }
+    } catch (IOException ex) {
+      ex.printStackTrace();
+      JOptionPane.showMessageDialog(panel, "Error loading accounts.csv file", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    if (!found) {
+      JOptionPane.showMessageDialog(panel, "Account not found", "Search Result", JOptionPane.WARNING_MESSAGE);
+      nameLabel.setText("");
+      balanceLabel.setText("$0.00");
+    }
+  }
 }
