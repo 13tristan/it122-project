@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.*;
 import java.util.Arrays;
 
+import exceptions.*;
 import models.AccountManager;
 import models.BankAccount;
 import java.time.LocalDateTime;
@@ -399,7 +400,7 @@ public class GUI extends JFrame{
       }
     });
 
-    // Close Account Functionality   CLOSE ACCOUNT NOT WORKINGGGGGGG- DI NAUPDATE SA accounts.csv
+
     closeAccountBtn.addActionListener(e -> {
       if (accountIdValue.getText().isEmpty()) {
         JOptionPane.showMessageDialog(panel, "No account selected", "Error", JOptionPane.ERROR_MESSAGE);
@@ -555,20 +556,8 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
       destAccountPanel.setVisible(false);
     });
 
-    transferBtn.addActionListener(e -> {
-      transactionFormPanel.setBorder(BorderFactory.createTitledBorder("Transfer"));
-      processBtn.setText("TRANSFER");
-
-      amountPanel.removeAll();
-      amountPanel.add(new JLabel("Transfer Amount:"));
-      amountPanel.add(amountField);
-      amountPanel.revalidate();
-
-      destAccountPanel.setVisible(true);
-    });
-
-    // Process button action
-    processBtn.addActionListener(e -> {
+    processBtn.addActionListener(ee -> {
+      // Validate input
       if (nameLabel.getText().isEmpty()) {
         JOptionPane.showMessageDialog(panel,
                 "Please search for an account first",
@@ -578,60 +567,110 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
       }
 
       String amountText = amountField.getText();
+      if (amountText.isEmpty()) {
+        JOptionPane.showMessageDialog(panel,
+                "Please enter an amount",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+        return;
+      }
+
       try {
         double amount = Double.parseDouble(amountText);
+        if (amount <= 0) {
+          throw new InvalidAmountException("Amount must be positive");
+        }
+
         String transactionType = processBtn.getText();
         AccountManager accountManager = AccountManager.getInstance();
         int accountNumber = Integer.parseInt(accountField.getText());
-        boolean success = false;
+        BankAccount account = accountManager.findAccount(accountNumber);
+
+        if (account == null) {
+          throw new InvalidAccountException("Account not found");
+        }
+
         String message = "";
+        boolean success = false;
 
         switch (transactionType) {
           case "DEPOSIT":
-            success = accountManager.deposit(accountNumber, amount);
-            message = "Deposit of $" + amount + " to account " + accountNumber;
-            if (success) accountManager.recordTransaction(accountNumber, "DEPOSIT", amount, null);
+            accountManager.deposit(accountNumber, amount);
+            message = String.format("Deposit of $%.2f to account %d completed successfully!",
+                    amount, accountNumber);
+            accountManager.recordTransaction(accountNumber, "DEPOSIT", amount, null);
+            success = true;
             break;
+
           case "WITHDRAW":
-            success = accountManager.withdraw(accountNumber, amount);
-            message = "Withdrawal of $" + amount + " from account " + accountNumber;
-            if (success) accountManager.recordTransaction(accountNumber, "WITHDRAW", amount, null);
+            accountManager.withdraw(accountNumber, amount);
+            message = String.format("Withdrawal of $%.2f from account %d completed successfully!",
+                    amount, accountNumber);
+            accountManager.recordTransaction(accountNumber, "WITHDRAW", amount, null);
+            success = true;
             break;
+
           case "TRANSFER":
-            int destAccount = Integer.parseInt(destAccountField.getText());
-            success = accountManager.transfer(accountNumber, destAccount, amount);
-            message = "Transfer of $" + amount + " from account " + accountNumber + " to account " + destAccount;
-            if (success) {
-              accountManager.recordTransaction(accountNumber, "TRANSFER_OUT", amount, String.valueOf(destAccount));
-              accountManager.recordTransaction(destAccount, "TRANSFER_IN", amount, String.valueOf(accountNumber));
+            if (destAccountField.getText().isEmpty()) {
+              throw new InvalidAccountException("Please enter destination account");
             }
+            int destAccount = Integer.parseInt(destAccountField.getText());
+            accountManager.transfer(accountNumber, destAccount, amount);
+            message = String.format("Transfer of $%.2f from account %d to account %d completed successfully!",
+                    amount, accountNumber, destAccount);
+            accountManager.recordTransaction(accountNumber, "TRANSFER_OUT", amount, String.valueOf(destAccount));
+            accountManager.recordTransaction(destAccount, "TRANSFER_IN", amount, String.valueOf(accountNumber));
+            success = true;
             break;
         }
 
         if (success) {
           JOptionPane.showMessageDialog(panel,
-                  message + " completed successfully!",
+                  message,
                   "Transaction Successful",
                   JOptionPane.INFORMATION_MESSAGE);
 
           // Update balance display
-          BankAccount account = accountManager.findAccount(accountNumber);
-          if (account != null) {
-            balanceLabel.setText("$" + account.getBalance());
-          }
+          balanceLabel.setText(String.format("$%.2f", account.getBalance()));
 
           // Clear fields
           amountField.setText("");
           destAccountField.setText("");
-        } else {
-          JOptionPane.showMessageDialog(panel,
-                  "Transaction failed. Please check account details and balance.",
-                  "Transaction Failed",
-                  JOptionPane.ERROR_MESSAGE);
         }
-      } catch (NumberFormatException ex) {
+
+      } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(panel,
-                "Please enter valid account numbers and amount",
+                "Please enter valid numbers for amount and account",
+                "Input Error",
+                JOptionPane.ERROR_MESSAGE);
+      } catch (InvalidAmountException ex) {
+        JOptionPane.showMessageDialog(panel,
+                ex.getMessage(),
+                "Invalid Amount",
+                JOptionPane.ERROR_MESSAGE);
+      } catch (InsufficientFundsException ex) {
+        JOptionPane.showMessageDialog(panel,
+                ex.getMessage(),
+                "Insufficient Funds",
+                JOptionPane.ERROR_MESSAGE);
+      } catch (AccountClosedException ex) {
+        JOptionPane.showMessageDialog(panel,
+                ex.getMessage(),
+                "Account Closed",
+                JOptionPane.ERROR_MESSAGE);
+      } catch (InvalidAccountException ex) {
+        JOptionPane.showMessageDialog(panel,
+                ex.getMessage(),
+                "Invalid Account",
+                JOptionPane.ERROR_MESSAGE);
+      } catch (TransactionLimitException ex) {
+        JOptionPane.showMessageDialog(panel,
+                ex.getMessage(),
+                "Transaction Limit",
+                JOptionPane.ERROR_MESSAGE);
+      } catch (Exception ex) {
+        JOptionPane.showMessageDialog(panel,
+                "An unexpected error occurred: " + ex.getMessage(),
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
       }

@@ -79,7 +79,7 @@ public class BankAccount {
   }
 
   // Deposit method
-  public void deposit(int amount) throws GlobalExceptionHandler {
+  public void deposit(double amount) throws GlobalExceptionHandler {
     if (amount <= 0) {
       throw new InvalidAmountException("Amount must be positive");
     }
@@ -89,7 +89,7 @@ public class BankAccount {
   }
 
   // Withdraw method
-  public void withdraw(int amount) throws GlobalExceptionHandler {
+  public void withdraw(double amount) throws GlobalExceptionHandler {
     if (amount <= 0) {
       throw new InvalidAmountException("Amount must be positive");
     }

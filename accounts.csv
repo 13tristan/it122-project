@@ -4,4 +4,4 @@ AccountNumber,Name,Password,Balance,AccountType,IsActive
 915603,Jade,234,35000.0,Regular,true
 648294,Beabadoobee,2525,10000.0,Investment,false
 109615,skibidisigma,ohio,69420.0,Regular,false
-362755,testest,12345678,30000.0,Regular,true
+362755,testest,12345678,0.0,Regular,true

@@ -1,5 +1,8 @@
 package models;
 
+import exceptions.GlobalExceptionHandler;
+import exceptions.InvalidAccountException;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,45 +36,38 @@ public class AccountManager {
         return null;
     }
 
-    // Deposit method
-    public boolean deposit(int accountNumber, double amount) {
+    public BankAccount deposit(int accountNumber, double amount)
+            throws GlobalExceptionHandler {
+
         BankAccount account = findAccount(accountNumber);
         if (account == null) {
-            return false;
+            throw new InvalidAccountException("Account not found: " + accountNumber);
         }
 
-        try {
-            account.deposit((int) amount);
-            saveAccountsToCSV();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        account.deposit(amount); // This may throw InvalidAmountException or AccountClosedException
+        saveAccountsToCSV();
+        return account;
     }
 
     // Withdraw method
-    public boolean withdraw(int accountNumber, double amount) {
+    public boolean withdraw(int accountNumber, double amount) throws GlobalExceptionHandler {
         BankAccount account = findAccount(accountNumber);
         if (account == null) {
-            return false;
+            throw new InvalidAccountException("Account not found: " + accountNumber);
         }
 
-        try {
-            account.withdraw((int) amount);
-            saveAccountsToCSV();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        account.withdraw(amount);
+        saveAccountsToCSV();
+        return true;
     }
 
     // Transfer method
-    public boolean transfer(int fromAccountNumber, int toAccountNumber, double amount) {
+    public boolean transfer(int fromAccountNumber, int toAccountNumber, double amount) throws GlobalExceptionHandler {
         BankAccount fromAccount = findAccount(fromAccountNumber);
         BankAccount toAccount = findAccount(toAccountNumber);
 
         if (fromAccount == null || toAccount == null) {
-            return false;
+            throw new InvalidAccountException("Account not found: " + fromAccountNumber + " or " + toAccountNumber);
         }
 
         try {
