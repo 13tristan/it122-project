@@ -121,37 +121,23 @@ public class GUI extends JFrame{
 
 
     loginBtn.addActionListener(e -> {
-      char[] password = inputAccPasswd.getPassword();
-      String inputPassword = new String(password);
-
-      // Clear the password from memory
-      Arrays.fill(password, '0');
-
-      // Verify password (compare to "123" in this example)
-      if (!inputPassword.equals("123")) {
-        // Show error message
-        JOptionPane.showMessageDialog(
-                this,                       // Parent component
-                "Incorrect password!",      // Message
-                "Login Error",              // Title
-                JOptionPane.ERROR_MESSAGE   // Message type
-        );
-
-        // Clear the password field
-        inputAccPasswd.setText("");
-
-        // Optionally set focus back to password field
-        inputAccPasswd.requestFocusInWindow();
-      } else {
-        // Password is correct - proceed with login
+      try {
+        AccountManager.getInstance().verifyAccountDetails(inputAccPasswd, inputAccNumber);
         JOptionPane.showMessageDialog(
                 this,
                 "Login successful!",
                 "Welcome",
                 JOptionPane.INFORMATION_MESSAGE
         );
-        // Show the home screen
         mainLayout.show(main, "CUSTOMER LIST");
+      }
+      catch (Exception ex) {
+        JOptionPane.showMessageDialog(
+                panel,                       // Parent component
+                ex.getMessage(),      // Message
+                "Login Error!",              // Title
+                JOptionPane.ERROR_MESSAGE   // Message type
+        );
       }
     });
 
@@ -598,7 +584,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
             accountManager.deposit(accountNumber, amount);
             message = String.format("Deposit of $%.2f to account %d completed successfully!",
                     amount, accountNumber);
-            accountManager.recordTransaction(accountNumber, "DEPOSIT", amount, null);
+            accountManager.logTransaction(accountNumber, "DEPOSIT", amount, null);
             success = true;
             break;
 
@@ -606,7 +592,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
             accountManager.withdraw(accountNumber, amount);
             message = String.format("Withdrawal of $%.2f from account %d completed successfully!",
                     amount, accountNumber);
-            accountManager.recordTransaction(accountNumber, "WITHDRAW", amount, null);
+            accountManager.logTransaction(accountNumber, "WITHDRAW", amount, null);
             success = true;
             break;
 
@@ -618,8 +604,8 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
             accountManager.transfer(accountNumber, destAccount, amount);
             message = String.format("Transfer of $%.2f from account %d to account %d completed successfully!",
                     amount, accountNumber, destAccount);
-            accountManager.recordTransaction(accountNumber, "TRANSFER_OUT", amount, String.valueOf(destAccount));
-            accountManager.recordTransaction(destAccount, "TRANSFER_IN", amount, String.valueOf(accountNumber));
+            accountManager.logTransaction(accountNumber, "TRANSFER_OUT", amount, String.valueOf(destAccount));
+            accountManager.logTransaction(destAccount, "TRANSFER_IN", amount, String.valueOf(accountNumber));
             success = true;
             break;
         }

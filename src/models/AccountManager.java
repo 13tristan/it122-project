@@ -2,13 +2,18 @@ package models;
 
 import exceptions.GlobalExceptionHandler;
 import exceptions.InvalidAccountException;
+import interfaces.AccountVerifiable;
+import interfaces.TransactionLoggable;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-public class AccountManager {
+public class AccountManager implements TransactionLoggable, AccountVerifiable {
+    private String username = "admin ";
+    private String password = "admin123";
     private static AccountManager instance;
     private List<BankAccount> accounts = new ArrayList<>();
     private DefaultTableModel tableModel;
@@ -81,31 +86,6 @@ public class AccountManager {
             return false;
         }
     }
-
-    // Add this method to record transactions
-    public void recordTransaction(int accountNumber, String transactionType, double amount, String targetAccount) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transactions.csv", true))) {
-            BankAccount account = findAccount(accountNumber);
-            if (account == null) return;
-
-            String transactionRecord = String.format("%d,%s,%s,%.2f,%s",
-                    accountNumber,
-                    account.getName(),
-                    transactionType,
-                    amount,
-                    java.time.LocalDateTime.now().toString());
-
-            if (targetAccount != null) {
-                transactionRecord += "," + targetAccount;
-            }
-
-            writer.write(transactionRecord);
-            writer.newLine();
-        } catch (IOException e) {
-            System.err.println("Error recording transaction: " + e.getMessage());
-        }
-    }
-
     public void addAccount(BankAccount account) {
         accounts.add(account);
         if (tableModel != null) {
@@ -321,4 +301,52 @@ public class AccountManager {
       balanceLabel.setText("$0.00");
     }
   }
+
+
+    // Add this method to record transactions
+    @Override
+    public void logTransaction(int accountNumber, String transactionType, double amount, String targetAccount) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transactions.csv", true))) {
+            BankAccount account = findAccount(accountNumber);
+            if (account == null) return;
+
+            String transactionRecord = String.format("%d,%s,%s,%.2f,%s",
+                    accountNumber,
+                    account.getName(),
+                    transactionType,
+                    amount,
+                    java.time.LocalDateTime.now().toString());
+
+            if (targetAccount != null) {
+                transactionRecord += "," + targetAccount;
+            }
+
+            writer.write(transactionRecord);
+            writer.newLine();
+        } catch (IOException e) {
+            System.err.println("Error recording transaction: " + e.getMessage());
+        }
+    }
+
+    // In AccountManager.java
+    public boolean verifyAccountDetails(JTextField passwordField, JTextField usernameField)
+            throws InvalidAccountException {
+
+        char[] passwordChars = passwordField.getText().toCharArray();
+        String password = new String(passwordChars);
+        String accountNumberStr = usernameField.getText().trim();
+
+        // Clear the password from memory immediately after use
+        Arrays.fill(passwordChars, '0');
+
+        if (accountNumberStr.isEmpty() || password.isEmpty()) {
+            throw new InvalidAccountException("Username or password cannot be empty");
+        }
+
+        if (!password.equals(this.password) && !accountNumberStr.equals(this.username)) {
+          throw new InvalidAccountException("Invalid username or password");
+        }
+        return true;
+    }
+
 }
