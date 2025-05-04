@@ -901,25 +901,6 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
       JOptionPane.showMessageDialog(null, "Invalid balance format", "Error", JOptionPane.ERROR_MESSAGE);
     }
   }
-
-
-
-  private void addAccountToCSV(BankAccount account) {
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter("accounts.csv", true))) {
-      writer.write(
-              account.getAccountNumber() + "," +
-              account.getName() + "," +
-              account.getPassword() + "," +
-              account.getBalance() + "," +
-              account.getAccountType() + "," +
-              account.isActive());
-      writer.newLine();
-    } catch (IOException e) {
-      e.printStackTrace();
-      JOptionPane.showMessageDialog(null, "Error saving account to CSV!");
-    }
-  }
-
   private JPanel createLeftPanel(){
     JPanel panel = new JPanel();
     panel.setBackground(new Color(13, 161, 204));
