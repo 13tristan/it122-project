@@ -542,6 +542,19 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
       destAccountPanel.setVisible(false);
     });
 
+    transferBtn.addActionListener(e -> {
+      transactionFormPanel.setBorder(BorderFactory.createTitledBorder("Transfer"));
+      processBtn.setText("TRANSFER");
+
+      amountPanel.removeAll();
+      amountPanel.add(new JLabel("Transfer Amount:"));
+      amountPanel.add(amountField);
+      amountPanel.revalidate();
+      amountPanel.repaint();
+
+      destAccountPanel.setVisible(true); // Show destination account field for transfers
+    });
+
     processBtn.addActionListener(ee -> {
       // Validate input
       if (nameLabel.getText().isEmpty()) {
@@ -595,8 +608,8 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
             accountManager.logTransaction(accountNumber, "WITHDRAW", amount, null);
             success = true;
             break;
-
           case "TRANSFER":
+            System.out.println("test");
             if (destAccountField.getText().isEmpty()) {
               throw new InvalidAccountException("Please enter destination account");
             }
