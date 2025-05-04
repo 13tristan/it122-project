@@ -52,13 +52,13 @@ public class GUI extends JFrame{
     panelLeft.setPreferredSize(new Dimension(300, 600));
 
 
-    JLabel bankTitle = new JLabel("BANK NAME");
+    JLabel bankTitle = new JLabel("Bombanklat");
     bankTitle.setBorder(BorderFactory.createEmptyBorder(130, 0, 0, 0));
     bankTitle.setForeground(new Color(235, 241, 238));
     bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
     bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    JLabel bankSubtitle = new JLabel("Number One Bank");
+    JLabel bankSubtitle = new JLabel("Secure. Lit. Bombanklat.");
     bankSubtitle.setForeground(new Color(235, 241, 238));
     bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
     bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 130, 0));
@@ -162,7 +162,7 @@ public class GUI extends JFrame{
 
     panelLeft.add(bankTitle);
     panelLeft.add(bankSubtitle);
-   // panelLeft.add(signUpBtn);
+    // panelLeft.add(signUpBtn);
     //panelLeft.add(exitBtn);
 
     panelRight.add(greeting);
@@ -843,7 +843,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     greeting.setAlignmentX(CENTER_ALIGNMENT);
 
     //USERNAME
-    JLabel accountName = new JLabel("Bank Name:");
+    JLabel accountName = new JLabel("Bank Holder:");
     accountName.setFont(new Font("Arial", Font.BOLD, 18));
     accountName.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 200));
 
@@ -984,13 +984,13 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     panel.setBackground(new Color(13, 161, 204));
     panel.setPreferredSize(new Dimension(300, 600));
 
-    JLabel bankTitle = new JLabel("BANK NAME");
+    JLabel bankTitle = new JLabel("Bombanklat");
     bankTitle.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
     bankTitle.setForeground(Color.WHITE);
     bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
     bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    JLabel bankSubtitle = new JLabel("Number One Bank");
+    JLabel bankSubtitle = new JLabel("Secure. Lit. Bombanklat.");
     bankSubtitle.setForeground(Color.WHITE);
     bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
     bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
