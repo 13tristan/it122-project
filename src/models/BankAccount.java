@@ -58,6 +58,18 @@ public class BankAccount {
     return password;
   }
 
+  public static String generateRandomPassword(int length) {
+    String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+    Random random = new Random();
+    StringBuilder password = new StringBuilder();
+
+    for (int i = 0; i < length; i++) {
+      password.append(chars.charAt(random.nextInt(chars.length())));
+    }
+
+    return password.toString();
+  }
+
   // Generate unique account number
   public int generateUniqueAccountNumber() {
     int generatedNumber;

@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.io.*;
 import java.util.Arrays;
@@ -47,21 +48,7 @@ public class GUI extends JFrame{
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(1000, 600));
 
-    JPanel panelLeft = new JPanel();
-    panelLeft.setBackground(new Color(13, 161, 204));
-    panelLeft.setPreferredSize(new Dimension(300, 600));
-
-
-    JLabel bankTitle = new JLabel("Bombanklat");
-    bankTitle.setBorder(BorderFactory.createEmptyBorder(130, 0, 0, 0));
-    bankTitle.setForeground(new Color(235, 241, 238));
-    bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
-    bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-    JLabel bankSubtitle = new JLabel("Secure. Lit. Bombanklat.");
-    bankSubtitle.setForeground(new Color(235, 241, 238));
-    bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 130, 0));
+    JPanel panelLeft = createLeftPanel1();
 
     JPanel panelRight = new JPanel();
     panelRight.setSize(new Dimension(700, 600));
@@ -146,10 +133,6 @@ public class GUI extends JFrame{
     panel.add(panelLeft, BorderLayout.WEST);
     panel.add(panelRight, BorderLayout.CENTER);
 
-    panelLeft.add(bankTitle);
-    panelLeft.add(bankSubtitle);
-    // panelLeft.add(signUpBtn);
-    //panelLeft.add(exitBtn);
 
     panelRight.add(greeting);
     panelRight.add(accountNumber);
@@ -352,7 +335,7 @@ public class GUI extends JFrame{
             accountIdValue.setText(values[0].trim());
             accountNameValue.setText(values[1].trim());
             accountTypeValue.setText(values[4].trim());
-            balanceValue.setText(String.format("$%,.2f", Double.parseDouble(values[3].trim())));
+            balanceValue.setText(String.format("₱%,.2f", Double.parseDouble(values[3].trim())));
             passwordValue.setText(values[2].trim());
             statusValue.setText(Boolean.parseBoolean(values[5].trim()) ? "Active" : "Inactive");
 
@@ -465,7 +448,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     JPanel balancePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     balancePanel.setBackground(Color.WHITE);
     balancePanel.add(new JLabel("Balance:"));
-    JLabel balanceLabel = new JLabel("$0.00");
+    JLabel balanceLabel = new JLabel("₱0.00");
     balancePanel.add(balanceLabel);
     transactionFormPanel.add(balancePanel);
 
@@ -484,12 +467,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     destAccountPanel.add(destAccountField);
     destAccountPanel.setVisible(false); // Hidden by default
 
-    // Total panel
-    JPanel totalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    totalPanel.setBackground(Color.WHITE);
-    totalPanel.add(new JLabel("Total:"));
-    JLabel totalLabel = new JLabel("$0.00");
-    totalPanel.add(totalLabel);
+
 
     // Process button
     JButton processBtn = new JButton("DEPOSIT");
@@ -501,7 +479,6 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     // Add components to form
     transactionFormPanel.add(amountPanel);
     transactionFormPanel.add(destAccountPanel);
-    transactionFormPanel.add(totalPanel);
     transactionFormPanel.add(Box.createVerticalStrut(20));
     transactionFormPanel.add(processBtn);
 
@@ -595,7 +572,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
         switch (transactionType) {
           case "DEPOSIT":
             accountManager.deposit(accountNumber, amount);
-            message = String.format("Deposit of $%.2f to account %d completed successfully!",
+            message = String.format("Deposit of ₱%.2f to account %d completed successfully!",
                     amount, accountNumber);
             accountManager.logTransaction(accountNumber, "DEPOSIT", amount, null);
             success = true;
@@ -603,7 +580,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
           case "WITHDRAW":
             accountManager.withdraw(accountNumber, amount);
-            message = String.format("Withdrawal of $%.2f from account %d completed successfully!",
+            message = String.format("Withdrawal of ₱%.2f from account %d completed successfully!",
                     amount, accountNumber);
             accountManager.logTransaction(accountNumber, "WITHDRAW", amount, null);
             success = true;
@@ -614,7 +591,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
             }
             int destAccount = Integer.parseInt(destAccountField.getText());
             accountManager.transfer(accountNumber, destAccount, amount);
-            message = String.format("Transfer of $%.2f from account %d to account %d completed successfully!",
+            message = String.format("Transfer of ₱%.2f from account %d to account %d completed successfully!",
                     amount, accountNumber, destAccount);
             accountManager.logTransaction(accountNumber, "TRANSFER_OUT", amount, String.valueOf(destAccount));
             accountManager.logTransaction(destAccount, "TRANSFER_IN", amount, String.valueOf(accountNumber));
@@ -629,7 +606,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
                   JOptionPane.INFORMATION_MESSAGE);
 
           // Update balance display
-          balanceLabel.setText(String.format("$%.2f", account.getBalance()));
+          balanceLabel.setText(String.format("₱%.2f", account.getBalance()));
 
           // Clear fields
           amountField.setText("");
@@ -687,25 +664,35 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     return button;
   }
 
-  private JPanel createTransactionHistoryPage(){
+  private JPanel createTransactionHistoryPage() {
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(1000, 600));
 
     JPanel panelLeft = createLeftPanel();
 
-    JPanel panelRight = new JPanel();
+
+    JPanel panelRight = new JPanel(new BorderLayout());
     panelRight.setBackground(Color.WHITE);
     panelRight.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
 
-    JPanel headerPanel = new JPanel(new BorderLayout());
+    JPanel headerPanel = new JPanel(new GridBagLayout());
     headerPanel.setBackground(Color.WHITE);
+    headerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.anchor = GridBagConstraints.WEST;
+    gbc.weightx = 1;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.gridx = 0;
+    gbc.gridy = 0;
 
     JLabel historyLabel = new JLabel("Transaction History");
     historyLabel.setFont(new Font("Arial", Font.BOLD, 26));
-    headerPanel.add(historyLabel, BorderLayout.WEST);
+    headerPanel.add(historyLabel, gbc);
 
-    JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    // Right-aligned components
+    JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
     rightHeaderPanel.setBackground(Color.WHITE);
 
     JLabel totalLabel = new JLabel("TOTAL: 0");
@@ -716,9 +703,14 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     dateTimeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
     rightHeaderPanel.add(dateTimeLabel);
 
-    headerPanel.add(rightHeaderPanel, BorderLayout.CENTER);
+    gbc.gridx = 1;
+    gbc.weightx = 0;
+    gbc.anchor = GridBagConstraints.EAST;
+    headerPanel.add(rightHeaderPanel, gbc);
+
     panelRight.add(headerPanel, BorderLayout.NORTH);
 
+    // Table setup
     String[] columnNames = {"Account No", "Name", "Type", "Amount", "Date"};
     DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
       @Override
@@ -729,36 +721,40 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
     AccountManager.getInstance().getTransactions(totalLabel, model);
 
-
-    // Table Display
     JTable historyTable = new JTable(model);
     historyTable.setFont(new Font("Arial", Font.PLAIN, 14));
     historyTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
     historyTable.setRowHeight(25);
 
+    // Configure table columns
+    TableColumnModel columnModel = historyTable.getColumnModel();
+    columnModel.getColumn(0).setPreferredWidth(100); // Account No
+    columnModel.getColumn(1).setPreferredWidth(200); // Name
+    columnModel.getColumn(2).setPreferredWidth(100); // Type
+    columnModel.getColumn(3).setPreferredWidth(100); // Amount
+    columnModel.getColumn(4).setPreferredWidth(150); // Date
+
     JScrollPane scrollPane = new JScrollPane(historyTable);
+    scrollPane.setPreferredSize(new Dimension(800, 400)); // Set preferred size
     panelRight.add(scrollPane, BorderLayout.CENTER);
 
+    // Refresh button panel
+    JPanel buttonPanel = new JPanel();
+    buttonPanel.setBackground(Color.WHITE);
+    buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-    // Create a Refresh button
     JButton refreshBtn = new JButton("Refresh");
     refreshBtn.setBackground(new Color(13, 161, 204));
     refreshBtn.setForeground(Color.WHITE);
     refreshBtn.setFont(new Font("Arial", Font.BOLD, 14));
+    refreshBtn.setPreferredSize(new Dimension(120, 35));
 
-// Add refresh button action listener
     refreshBtn.addActionListener(e -> {
       AccountManager.getInstance().getTransactions(totalLabel, model);
     });
 
-// Add Refresh button below the table
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    buttonPanel.setBackground(Color.WHITE);
     buttonPanel.add(refreshBtn);
-
     panelRight.add(buttonPanel, BorderLayout.SOUTH);
-
-
 
     panel.add(panelLeft, BorderLayout.WEST);
     panel.add(panelRight, BorderLayout.CENTER);
@@ -806,12 +802,24 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
     JPanel accPassPanel = new JPanel();
     accPassPanel.setBackground(new Color(255, 255, 255));
-    accPassPanel.setSize(new Dimension(700, 90));
     accPassPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0 ,50));
 
     JTextField inputAccPasswd= new JTextField(20);
     inputAccPasswd.setFont(new Font("Arial", Font.PLAIN, 18));
-    accPassPanel.add(inputAccPasswd);
+    inputAccPasswd.setBackground(Color.WHITE);
+    inputAccPasswd.setText(BankAccount.generateRandomPassword(12)); // Set default random password
+    inputAccPasswd.setEditable(false);//Make it non-editable to force random passwords
+
+    JButton generatePassBtn = new JButton("Generate");
+    generatePassBtn.addActionListener(e -> {
+      inputAccPasswd.setText(BankAccount.generateRandomPassword(12));
+    });
+
+    JPanel passGenPanel = new JPanel();
+    passGenPanel.setBackground(Color.WHITE);
+    passGenPanel.add(inputAccPasswd);
+    passGenPanel.add(generatePassBtn);
+    accPassPanel.add(passGenPanel);
 
     JLabel accountBalance = new JLabel("Balance:");
     accountBalance.setFont(new Font("Arial", Font.BOLD, 18));
@@ -835,7 +843,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     accTypePanel.setSize(new Dimension(700, 90));
     accTypePanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20, 50));
 
-    String[] accountTypes = {"Checking", "Investment"};
+    String[] accountTypes = {"Checking", "Investment", "Savings"};
     JComboBox<String> accountTypeComboBox = new JComboBox<>(accountTypes);
     accountTypeComboBox.setFont(new Font("Arial", Font.PLAIN, 18));
     accTypePanel.add(accountTypeComboBox);
@@ -900,18 +908,43 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
       JOptionPane.showMessageDialog(null, "Invalid balance format", "Error", JOptionPane.ERROR_MESSAGE);
     }
   }
+
+private JPanel createLeftPanel1(){
+  JPanel panel = new JPanel();
+  panel.setBackground(new Color(13, 161, 204));
+  panel.setPreferredSize(new Dimension(300, 600));
+
+
+  JLabel bankTitle = new JLabel("People's Bank");
+  bankTitle.setBorder(BorderFactory.createEmptyBorder(130, 0, 0, 0));
+  bankTitle.setForeground(new Color(235, 241, 238));
+  bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
+  bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+  JLabel bankSubtitle = new JLabel("Of The People, For The People");
+  bankSubtitle.setForeground(new Color(235, 241, 238));
+  bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+  bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 130, 0));
+
+  panel.add(bankTitle);
+  panel.add(bankSubtitle);
+
+  return panel;
+}
+
+
   private JPanel createLeftPanel(){
     JPanel panel = new JPanel();
     panel.setBackground(new Color(13, 161, 204));
     panel.setPreferredSize(new Dimension(300, 600));
 
-    JLabel bankTitle = new JLabel("Bombanklat");
+    JLabel bankTitle = new JLabel("People's Bank");
     bankTitle.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
     bankTitle.setForeground(Color.WHITE);
     bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
     bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    JLabel bankSubtitle = new JLabel("Secure. Lit. Bombanklat.");
+    JLabel bankSubtitle = new JLabel("Of The People, For The People");
     bankSubtitle.setForeground(Color.WHITE);
     bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
     bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));

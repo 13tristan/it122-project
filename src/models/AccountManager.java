@@ -7,6 +7,8 @@ import interfaces.InterestBearing;
 import interfaces.TransactionLoggable;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -140,7 +142,7 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable, I
             }
         } catch (IOException e) {
             System.err.println("Error loading accounts: " + e.getMessage());
-            // Create new file if doesn't exist
+            // Create new file if it doesn't exist
             try {
                 new File("accounts.csv").createNewFile();
             } catch (IOException ex) {
@@ -316,7 +318,7 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable, I
                     account.getName(),
                     transactionType,
                     amount,
-                    java.time.LocalDateTime.now().toString());
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
             if (targetAccount != null) {
                 transactionRecord += "," + targetAccount;
