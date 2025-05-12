@@ -7,18 +7,16 @@ import interfaces.InterestBearing;
 import interfaces.TransactionLoggable;
 
 import java.io.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 public class AccountManager implements TransactionLoggable, AccountVerifiable, InterestBearing {
-    private String username = "admin ";
-    private String password = "admin123";
+    private final String username = "admin";
+    private final String password = "admin123";
     private static AccountManager instance;
-    private List<BankAccount> accounts = new ArrayList<>();
+    private final List<BankAccount> accounts = new ArrayList<>();
     private DefaultTableModel tableModel;
 
     private AccountManager() {}
@@ -49,7 +47,7 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable, I
 
         BankAccount account = findAccount(accountNumber);
         if (account == null) {
-            throw new InvalidAccountException("Account not found: " + accountNumber);
+            throw new InvalidAccountException(accountNumber, "Account not found");
         }
 
         account.deposit(amount); // This may throw InvalidAmountException or AccountClosedException
@@ -61,7 +59,7 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable, I
     public boolean withdraw(int accountNumber, double amount) throws GlobalExceptionHandler {
         BankAccount account = findAccount(accountNumber);
         if (account == null) {
-            throw new InvalidAccountException("Account not found: " + accountNumber);
+            throw new InvalidAccountException(accountNumber, "Account not found");
         }
 
         account.withdraw(amount);
@@ -75,7 +73,10 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable, I
         BankAccount toAccount = findAccount(toAccountNumber);
 
         if (fromAccount == null || toAccount == null) {
-            throw new InvalidAccountException("Account not found: " + fromAccountNumber + " or " + toAccountNumber);
+            throw new InvalidAccountException(
+                    fromAccount == null ? fromAccountNumber : toAccountNumber,
+                    "Account not found"
+            );
         }
 
         try {
@@ -142,7 +143,7 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable, I
             }
         } catch (IOException e) {
             System.err.println("Error loading accounts: " + e.getMessage());
-            // Create new file if it doesn't exist
+            // Create new file if doesn't exist
             try {
                 new File("accounts.csv").createNewFile();
             } catch (IOException ex) {
@@ -247,63 +248,63 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable, I
     }
 
 
-  public void handleSearchAccount(JPanel panel, JTextField accountIdValue, JLabel nameLabel, JLabel balanceLabel) {
-    String inputId = accountIdValue.getText().trim();
+    public void handleSearchAccount(JPanel panel, JTextField accountIdValue, JLabel nameLabel, JLabel balanceLabel) {
+        String inputId = accountIdValue.getText().trim();
 
-    if (inputId.isEmpty()) {
-      JOptionPane.showMessageDialog(panel, "No account selected", "Error", JOptionPane.ERROR_MESSAGE);
-      return;
-    }
-
-    boolean found = false;
-
-    try (BufferedReader br = new BufferedReader(new FileReader("accounts.csv"))) {
-      String line;
-      boolean firstLine = true;
-
-      while ((line = br.readLine()) != null) {
-        if (firstLine) {
-          firstLine = false;
-          continue; // Skip header
+        if (inputId.isEmpty()) {
+            JOptionPane.showMessageDialog(panel, "No account selected", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
-        String[] values = line.split(",");
-        if (values.length >= 6) {
-          String csvAccountNo = values[0].trim();
-          String name = values[1].trim();
-          String balance = values[3].trim();
-          String isActive = values[5].trim();
+        boolean found = false;
+
+        try (BufferedReader br = new BufferedReader(new FileReader("accounts.csv"))) {
+            String line;
+            boolean firstLine = true;
+
+            while ((line = br.readLine()) != null) {
+                if (firstLine) {
+                    firstLine = false;
+                    continue; // Skip header
+                }
+
+                String[] values = line.split(",");
+                if (values.length >= 6) {
+                    String csvAccountNo = values[0].trim();
+                    String name = values[1].trim();
+                    String balance = values[3].trim();
+                    String isActive = values[5].trim();
 
 
 
-          if (csvAccountNo.equals(inputId)) {
+                    if (csvAccountNo.equals(inputId)) {
 
-            if (!isActive.equals("true")) {
-              JOptionPane.showMessageDialog(panel, "Account is not active", "Error", JOptionPane.ERROR_MESSAGE);
-              nameLabel.setText("");
-              balanceLabel.setText("$0.00");
-              return;
+                        if (!isActive.equals("true")) {
+                            JOptionPane.showMessageDialog(panel, "Account is not active", "Error", JOptionPane.ERROR_MESSAGE);
+                            nameLabel.setText("");
+                            balanceLabel.setText("$0.00");
+                            return;
+                        }
+
+
+                        found = true;
+                        nameLabel.setText(name);
+                        balanceLabel.setText("$" + balance);
+                        break;
+                    }
+                }
             }
-
-
-            found = true;
-            nameLabel.setText(name);
-            balanceLabel.setText("$" + balance);
-            break;
-          }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(panel, "Error loading accounts.csv file", "Error", JOptionPane.ERROR_MESSAGE);
         }
-      }
-    } catch (IOException ex) {
-      ex.printStackTrace();
-      JOptionPane.showMessageDialog(panel, "Error loading accounts.csv file", "Error", JOptionPane.ERROR_MESSAGE);
-    }
 
-    if (!found) {
-      JOptionPane.showMessageDialog(panel, "Account not found", "Search Result", JOptionPane.WARNING_MESSAGE);
-      nameLabel.setText("");
-      balanceLabel.setText("$0.00");
+        if (!found) {
+            JOptionPane.showMessageDialog(panel, "Account not found", "Search Result", JOptionPane.WARNING_MESSAGE);
+            nameLabel.setText("");
+            balanceLabel.setText("$0.00");
+        }
     }
-  }
 
 
     // Add this method to record transactions
@@ -318,7 +319,7 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable, I
                     account.getName(),
                     transactionType,
                     amount,
-                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                    java.time.LocalDateTime.now());
 
             if (targetAccount != null) {
                 transactionRecord += "," + targetAccount;
@@ -344,56 +345,96 @@ public class AccountManager implements TransactionLoggable, AccountVerifiable, I
         Arrays.fill(passwordChars, '0');
 
         if (accountNumberStr.isEmpty() || password.isEmpty()) {
-            throw new InvalidAccountException("Username or password cannot be empty");
+            throw new InvalidAccountException(Integer.parseInt(accountNumberStr), "Username or password cannot be empty");
         }
 
         if (!password.equals(this.password) && !accountNumberStr.equals(this.username)) {
-          throw new InvalidAccountException("Invalid username or password");
+            throw new InvalidAccountException(Integer.parseInt(accountNumberStr), "Invalid username or password");
         }
         return true;
     }
 
     @Override
     public void getTransactions(JLabel totalLabel , DefaultTableModel model) {
-      model.setRowCount(0);
+        model.setRowCount(0);
 // Load data from CSV
-      try (BufferedReader br = new BufferedReader(new FileReader("transactions.csv"))) {
-        String line;
-        boolean firstLine = true;
+        try (BufferedReader br = new BufferedReader(new FileReader("transactions.csv"))) {
+            String line;
+            boolean firstLine = true;
 
-        while ((line = br.readLine()) != null) {
-          if (firstLine) {
-            firstLine = false;
-            continue; // Skip header
-          }
+            while ((line = br.readLine()) != null) {
+                if (firstLine) {
+                    firstLine = false;
+                    continue; // Skip header
+                }
 
-          String[] values = line.split(",");
-          if (values.length >= 5) { // Ensure valid row
-            String accountNo = values[0].trim();
-            String name = values[1].trim();
-            String type = values[2].trim();
-            String amount = values[3].trim();
-            String date = values[4].trim();
+                String[] values = line.split(",");
+                if (values.length >= 5) { // Ensure valid row
+                    String accountNo = values[0].trim();
+                    String name = values[1].trim();
+                    String type = values[2].trim();
+                    String amount = values[3].trim();
+                    String date = values[4].trim();
 
-            model.addRow(new Object[]{accountNo, name, type, amount, date});
-          }
+                    model.addRow(new Object[]{accountNo, name, type, amount, date});
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error loading transaction history from CSV", "Error", JOptionPane.ERROR_MESSAGE);
         }
-      } catch (IOException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error loading transaction history from CSV", "Error", JOptionPane.ERROR_MESSAGE);
-      }
 
-      totalLabel.setText("TOTAL: " + model.getRowCount());
+        totalLabel.setText("TOTAL: " + model.getRowCount());
     }
 
 
-  @Override
-  public double calculateInterest() {
-    return 0;
-  }
+    @Override
+    public double calculateInterest() {
+        double totalInterest = 0.0;
+        for (BankAccount account : accounts) {
+            // Only calculate interest for active investment accounts
+            if (account.isActive() && "Investment".equalsIgnoreCase(account.getAccountType())) {
+                // Assuming 5% annual interest (0.4167% monthly)
+                double monthlyInterestRate = 0.004167;
+                double interest = account.getBalance() * monthlyInterestRate;
+                totalInterest += interest;
+            }
+        }
+        return totalInterest;
+    }
 
-  @Override
-  public void applyInterest() {
+    @Override
+    public void applyInterest() {
+        // Get the first day of the month to apply interest
+        java.time.LocalDate today = java.time.LocalDate.now();
+        if (today.getDayOfMonth() == 1) { // Only apply on 1st of each month
+            for (BankAccount account : accounts) {
+                // Only apply interest to active investment accounts
+                if (account.isActive() && "Investment".equalsIgnoreCase(account.getAccountType())) {
+                    double monthlyInterestRate = 0.004167; // 5% annual -> ~0.4167% monthly
+                    double interest = account.getBalance() * monthlyInterestRate;
 
-  }
+                    // Deposit the interest
+                    try {
+                        account.deposit(interest);
+
+                        // Log the interest payment as a transaction
+                        logTransaction(account.getAccountNumber(),
+                                "INTEREST PAYMENT",
+                                interest,
+                                null);
+                    } catch (GlobalExceptionHandler e) {
+                        System.err.println("Error applying interest to account " +
+                                account.getAccountNumber() + ": " + e.getMessage());
+                    }
+                }
+            }
+            saveAccountsToCSV(); // Save all account updates
+        }
+    }
+
+    // Added this method to be called monthly (e.g., by a scheduler)
+    public void monthlyInterestApplication() {
+        applyInterest();
+    }
 }

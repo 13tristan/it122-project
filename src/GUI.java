@@ -1,8 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.io.*;
+import java.awt.event.*;
 import java.util.Arrays;
 
 import exceptions.*;
@@ -19,37 +19,55 @@ public class GUI extends JFrame{
 
     intializeUI();
     setLocationRelativeTo(null);
+    setResizable(false);
   }
-   private void intializeUI(){
-     setTitle("BANK");
-     setSize(new Dimension(1000, 600));
-     setDefaultCloseOperation(EXIT_ON_CLOSE);
-     setVisible(true);
+  private void intializeUI(){
+    setTitle("BANK");
+    setSize(new Dimension(1000, 600));
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
+    setVisible(true);
 
-     mainLayout = new CardLayout();
-     main = new JPanel(mainLayout);
+    mainLayout = new CardLayout();
+    main = new JPanel(mainLayout);
 
-     JPanel loginPage = createLoginPage();
-     JPanel customerListPage = createCustomerListPage();
-     JPanel transactionProcessPage = createTransactionProcessPage();
-     JPanel transactionHistoryPage = createTransactionHistoryPage();
-     JPanel addCustomerPage = createAddCustomerPage();
+    JPanel loginPage = createLoginPage();
+    JPanel customerListPage = createCustomerListPage();
+    JPanel transactionProcessPage = createTransactionProcessPage();
+    JPanel transactionHistoryPage = createTransactionHistoryPage();
+    JPanel addCustomerPage = createAddCustomerPage();
 
-     main.add(loginPage, "LOG IN");
-     main.add(customerListPage, "CUSTOMER LIST");
-     main.add(transactionProcessPage, "TRANSACTION PROCESS");
-     main.add(transactionHistoryPage, "TRANSACTION HISTORY");
-     main.add(addCustomerPage, "ADD CUSTOMER");
+    main.add(loginPage, "LOG IN");
+    main.add(customerListPage, "CUSTOMER LIST");
+    main.add(transactionProcessPage, "TRANSACTION PROCESS");
+    main.add(transactionHistoryPage, "TRANSACTION HISTORY");
+    main.add(addCustomerPage, "ADD CUSTOMER");
 
-     add(main);
-   }
+    add(main);
+  }
 
   private JPanel createLoginPage(){
     JPanel panel = new JPanel(new BorderLayout());
-    panel.setPreferredSize(new Dimension(1000, 600));
+    panel.setBackground(new Color(13, 161, 204));
+    panel.setPreferredSize(new Dimension(300, 600));
 
-    JPanel panelLeft = createLeftPanel1();
+    JPanel panelLeft = new JPanel();
+    panelLeft.setBackground(new Color(13, 161, 204));
+    panelLeft.setPreferredSize(new Dimension(300, 600));
 
+
+    JLabel bankTitle = new JLabel("People's Bank");
+    bankTitle.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+    bankTitle.setForeground(Color.WHITE);
+    bankTitle.setFont(new Font("Segoe UI", Font.BOLD, 32));
+    bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    JLabel bankSubtitle = new JLabel("Of The People, For The People");
+    bankSubtitle.setForeground(new Color(0xE0E0E0));
+    bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+    bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
+
+
+    // Right Panel - Login FOrm
     JPanel panelRight = new JPanel();
     panelRight.setSize(new Dimension(700, 600));
     panelRight.setBackground(new Color(255, 255, 255));
@@ -57,12 +75,12 @@ public class GUI extends JFrame{
     panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
 
     JLabel greeting = new JLabel("Welcome");
-    greeting.setFont(new Font("Arial", Font.BOLD, 36));
+    greeting.setFont(new Font("Segoe UI", Font.BOLD, 36));
     greeting.setAlignmentX(CENTER_ALIGNMENT);
 
     //USERNAME
     JLabel accountNumber = new JLabel("Username:");
-    accountNumber.setFont(new Font("Arial", Font.BOLD, 18));
+    accountNumber.setFont(new Font("Segoe UI", Font.BOLD, 18));
     accountNumber.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
 
 
@@ -73,13 +91,13 @@ public class GUI extends JFrame{
 
     //USERNAME TEXTFIELD
     JTextField inputAccNumber = new JTextField(20);
-    inputAccNumber.setFont(new Font("Arial", Font.PLAIN, 18));
+    inputAccNumber.setFont(new Font("Segoe UI", Font.PLAIN, 18));
     accNumPanel.add(inputAccNumber);
 
 
 
     JLabel accountPasswd = new JLabel("Password:");
-    accountPasswd.setFont(new Font("Arial", Font.BOLD, 18));
+    accountPasswd.setFont(new Font("Segoe UI", Font.BOLD, 18));
     accountPasswd.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 168));
 
 
@@ -89,7 +107,7 @@ public class GUI extends JFrame{
     accPassPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 20 ,50));
 
     JPasswordField inputAccPasswd= new JPasswordField(20);
-    inputAccPasswd.setFont(new Font("Arial", Font.PLAIN, 18));
+    inputAccPasswd.setFont(new Font("Segoe UI", Font.PLAIN, 18));
     accPassPanel.add(inputAccPasswd);
 
 
@@ -101,7 +119,7 @@ public class GUI extends JFrame{
 
     JButton loginBtn = new JButton("Log In");
     loginBtn.setPreferredSize(new Dimension(100, 40));
-    loginBtn.setFont(new Font("Arial", Font.BOLD, 16));
+    loginBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
     loginBtn.setBackground(new Color(13, 161, 204));
     loginBtn.setForeground(new Color(255, 255, 255));
     loginBtnPanel.add(loginBtn);
@@ -133,6 +151,11 @@ public class GUI extends JFrame{
     panel.add(panelLeft, BorderLayout.WEST);
     panel.add(panelRight, BorderLayout.CENTER);
 
+
+    panelLeft.add(bankTitle);
+    panelLeft.add(bankSubtitle);
+    // panelLeft.add(signUpBtn);
+    //panelLeft.add(exitBtn);
 
     panelRight.add(greeting);
     panelRight.add(accountNumber);
@@ -167,18 +190,18 @@ public class GUI extends JFrame{
     headerPanel.setBackground(Color.WHITE);
 
     JLabel customerListLabel = new JLabel("Customer Lists");
-    customerListLabel.setFont(new Font("Arial", Font.BOLD, 26));
+    customerListLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
     headerPanel.add(customerListLabel, BorderLayout.WEST);
 
     JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     rightHeaderPanel.setBackground(Color.WHITE);
 
     JLabel totalLabel = new JLabel("TOTAL: 0");
-    totalLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+    totalLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
     rightHeaderPanel.add(totalLabel);
 
     JLabel dateTimeLabel = new JLabel("", SwingConstants.RIGHT);
-    dateTimeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+    dateTimeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
     rightHeaderPanel.add(dateTimeLabel);
 
     headerPanel.add(rightHeaderPanel, BorderLayout.CENTER);
@@ -197,7 +220,7 @@ public class GUI extends JFrame{
     JButton searchBtn = new JButton("Search");
     searchBtn.setBackground(new Color(13, 161, 204));
     searchBtn.setForeground(Color.WHITE);
-    searchBtn.setFont(new Font("Arial", Font.BOLD, 12));
+    searchBtn.setFont(new Font("Segoe UI", Font.BOLD, 12));
     searchPanel.add(searchBtn);
 
     topSection.add(searchPanel);
@@ -225,9 +248,11 @@ public class GUI extends JFrame{
     AccountManager.getInstance().loadAccountsFromCSV();
 
     JTable customerTable = new JTable(model);
-    customerTable.setFont(new Font("Arial", Font.PLAIN, 14));
-    customerTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-    customerTable.setRowHeight(25);
+    customerTable.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+    customerTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+    customerTable.setRowHeight(30);
+    customerTable.setShowGrid(false);
+    customerTable.setIntercellSpacing(new Dimension(0, 0));
 
     JScrollPane scrollPane = new JScrollPane(customerTable);
     tablePanel.add(scrollPane, BorderLayout.CENTER);
@@ -335,7 +360,7 @@ public class GUI extends JFrame{
             accountIdValue.setText(values[0].trim());
             accountNameValue.setText(values[1].trim());
             accountTypeValue.setText(values[4].trim());
-            balanceValue.setText(String.format("₱%,.2f", Double.parseDouble(values[3].trim())));
+            balanceValue.setText(String.format("$%,.2f", Double.parseDouble(values[3].trim())));
             passwordValue.setText(values[2].trim());
             statusValue.setText(Boolean.parseBoolean(values[5].trim()) ? "Active" : "Inactive");
 
@@ -376,8 +401,8 @@ public class GUI extends JFrame{
         return;
       }
 
-AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNameValue, accountTypeValue,
-        balanceValue, passwordValue, statusValue);
+      AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNameValue, accountTypeValue,
+              balanceValue, passwordValue, statusValue);
     });
 
 
@@ -429,10 +454,12 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     JTextField accountField = new JTextField(10);
     accountSearchPanel.add(accountField);
 
+
+    // SearchBtn
     JButton searchBtn = new JButton("Search");
     searchBtn.setBackground(new Color(13, 161, 204));
     searchBtn.setForeground(Color.WHITE);
-    searchBtn.setFont(new Font("Arial", Font.BOLD, 12));
+    searchBtn.setFont(new Font("Segoe UI", Font.BOLD, 12));
     accountSearchPanel.add(searchBtn);
 
     transactionFormPanel.add(accountSearchPanel);
@@ -448,7 +475,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     JPanel balancePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     balancePanel.setBackground(Color.WHITE);
     balancePanel.add(new JLabel("Balance:"));
-    JLabel balanceLabel = new JLabel("₱0.00");
+    JLabel balanceLabel = new JLabel("$0.00");
     balancePanel.add(balanceLabel);
     transactionFormPanel.add(balancePanel);
 
@@ -473,7 +500,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     JButton processBtn = new JButton("DEPOSIT");
     processBtn.setBackground(new Color(13, 161, 204));
     processBtn.setForeground(Color.WHITE);
-    processBtn.setFont(new Font("Arial", Font.BOLD, 14));
+    processBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
     processBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
 
     // Add components to form
@@ -554,7 +581,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
       try {
         double amount = Double.parseDouble(amountText);
         if (amount <= 0) {
-          throw new InvalidAmountException("Amount must be positive");
+          throw new InvalidAmountException(amount, "Amount must be positive");
         }
 
         String transactionType = processBtn.getText();
@@ -563,7 +590,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
         BankAccount account = accountManager.findAccount(accountNumber);
 
         if (account == null) {
-          throw new InvalidAccountException("Account not found");
+          throw new InvalidAccountException(accountNumber, "Account not found");
         }
 
         String message = "";
@@ -572,7 +599,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
         switch (transactionType) {
           case "DEPOSIT":
             accountManager.deposit(accountNumber, amount);
-            message = String.format("Deposit of ₱%.2f to account %d completed successfully!",
+            message = String.format("Deposit of $%.2f to account %d completed successfully!",
                     amount, accountNumber);
             accountManager.logTransaction(accountNumber, "DEPOSIT", amount, null);
             success = true;
@@ -580,18 +607,18 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
           case "WITHDRAW":
             accountManager.withdraw(accountNumber, amount);
-            message = String.format("Withdrawal of ₱%.2f from account %d completed successfully!",
+            message = String.format("Withdrawal of $%.2f from account %d completed successfully!",
                     amount, accountNumber);
             accountManager.logTransaction(accountNumber, "WITHDRAW", amount, null);
             success = true;
             break;
           case "TRANSFER":
             if (destAccountField.getText().isEmpty()) {
-              throw new InvalidAccountException("Please enter destination account");
+              throw new InvalidAccountException(accountNumber, "Please enter destination account");
             }
             int destAccount = Integer.parseInt(destAccountField.getText());
             accountManager.transfer(accountNumber, destAccount, amount);
-            message = String.format("Transfer of ₱%.2f from account %d to account %d completed successfully!",
+            message = String.format("Transfer of $%.2f from account %d to account %d completed successfully!",
                     amount, accountNumber, destAccount);
             accountManager.logTransaction(accountNumber, "TRANSFER_OUT", amount, String.valueOf(destAccount));
             accountManager.logTransaction(destAccount, "TRANSFER_IN", amount, String.valueOf(accountNumber));
@@ -606,7 +633,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
                   JOptionPane.INFORMATION_MESSAGE);
 
           // Update balance display
-          balanceLabel.setText(String.format("₱%.2f", account.getBalance()));
+          balanceLabel.setText(String.format("$%.2f", account.getBalance()));
 
           // Clear fields
           amountField.setText("");
@@ -657,60 +684,46 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
   private JButton createTransactionButton(String text) {
     JButton button = new JButton(text);
-    button.setPreferredSize(new Dimension(120, 40));
+    button.setPreferredSize(new Dimension(140, 45));
     button.setBackground(new Color(13, 161, 204));
     button.setForeground(Color.WHITE);
-    button.setFont(new Font("Arial", Font.BOLD, 14));
+    button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+    button.setFocusPainted(false);
     return button;
   }
 
-  private JPanel createTransactionHistoryPage() {
+  private JPanel createTransactionHistoryPage(){
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(1000, 600));
 
     JPanel panelLeft = createLeftPanel();
 
-
-    JPanel panelRight = new JPanel(new BorderLayout());
+    JPanel panelRight = new JPanel();
     panelRight.setBackground(Color.WHITE);
     panelRight.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
 
-    JPanel headerPanel = new JPanel(new GridBagLayout());
+    JPanel headerPanel = new JPanel(new BorderLayout());
     headerPanel.setBackground(Color.WHITE);
-    headerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
-
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.anchor = GridBagConstraints.WEST;
-    gbc.weightx = 1;
-    gbc.fill = GridBagConstraints.HORIZONTAL;
-    gbc.gridx = 0;
-    gbc.gridy = 0;
 
     JLabel historyLabel = new JLabel("Transaction History");
-    historyLabel.setFont(new Font("Arial", Font.BOLD, 26));
-    headerPanel.add(historyLabel, gbc);
+    historyLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
+    headerPanel.add(historyLabel, BorderLayout.WEST);
 
-    // Right-aligned components
-    JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+    JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     rightHeaderPanel.setBackground(Color.WHITE);
 
     JLabel totalLabel = new JLabel("TOTAL: 0");
-    totalLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+    totalLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
     rightHeaderPanel.add(totalLabel);
 
     JLabel dateTimeLabel = new JLabel("", SwingConstants.RIGHT);
-    dateTimeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+    dateTimeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
     rightHeaderPanel.add(dateTimeLabel);
 
-    gbc.gridx = 1;
-    gbc.weightx = 0;
-    gbc.anchor = GridBagConstraints.EAST;
-    headerPanel.add(rightHeaderPanel, gbc);
-
+    headerPanel.add(rightHeaderPanel, BorderLayout.CENTER);
     panelRight.add(headerPanel, BorderLayout.NORTH);
 
-    // Table setup
     String[] columnNames = {"Account No", "Name", "Type", "Amount", "Date"};
     DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
       @Override
@@ -721,40 +734,36 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
     AccountManager.getInstance().getTransactions(totalLabel, model);
 
+
+    // Table Display
     JTable historyTable = new JTable(model);
-    historyTable.setFont(new Font("Arial", Font.PLAIN, 14));
-    historyTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+    historyTable.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+    historyTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
     historyTable.setRowHeight(25);
 
-    // Configure table columns
-    TableColumnModel columnModel = historyTable.getColumnModel();
-    columnModel.getColumn(0).setPreferredWidth(100); // Account No
-    columnModel.getColumn(1).setPreferredWidth(200); // Name
-    columnModel.getColumn(2).setPreferredWidth(100); // Type
-    columnModel.getColumn(3).setPreferredWidth(100); // Amount
-    columnModel.getColumn(4).setPreferredWidth(150); // Date
-
     JScrollPane scrollPane = new JScrollPane(historyTable);
-    scrollPane.setPreferredSize(new Dimension(800, 400)); // Set preferred size
     panelRight.add(scrollPane, BorderLayout.CENTER);
 
-    // Refresh button panel
-    JPanel buttonPanel = new JPanel();
-    buttonPanel.setBackground(Color.WHITE);
-    buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
+    // Create a Refresh button
     JButton refreshBtn = new JButton("Refresh");
     refreshBtn.setBackground(new Color(13, 161, 204));
     refreshBtn.setForeground(Color.WHITE);
-    refreshBtn.setFont(new Font("Arial", Font.BOLD, 14));
-    refreshBtn.setPreferredSize(new Dimension(120, 35));
+    refreshBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
+// Add refresh button action listener
     refreshBtn.addActionListener(e -> {
       AccountManager.getInstance().getTransactions(totalLabel, model);
     });
 
+// Add Refresh button below the table
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    buttonPanel.setBackground(Color.WHITE);
     buttonPanel.add(refreshBtn);
+
     panelRight.add(buttonPanel, BorderLayout.SOUTH);
+
+
 
     panel.add(panelLeft, BorderLayout.WEST);
     panel.add(panelRight, BorderLayout.CENTER);
@@ -775,12 +784,12 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
 
     JLabel greeting = new JLabel("Create Account");
-    greeting.setFont(new Font("Arial", Font.BOLD, 36));
+    greeting.setFont(new Font("Segoe UI", Font.BOLD, 36));
     greeting.setAlignmentX(CENTER_ALIGNMENT);
 
     //USERNAME
     JLabel accountName = new JLabel("Bank Holder:");
-    accountName.setFont(new Font("Arial", Font.BOLD, 18));
+    accountName.setFont(new Font("Segoe UI", Font.BOLD, 18));
     accountName.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 200));
 
 
@@ -791,38 +800,26 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
     //USERNAME TEXTFIELD
     JTextField inputAccName = new JTextField(20);
-    inputAccName.setFont(new Font("Arial", Font.PLAIN, 18));
+    inputAccName.setFont(new Font("Segoe UI", Font.PLAIN, 18));
     accNamePanel.add(inputAccName);
 
 
 
     JLabel accountPasswd = new JLabel("Password:");
-    accountPasswd.setFont(new Font("Arial", Font.BOLD, 18));
+    accountPasswd.setFont(new Font("Segoe UI", Font.BOLD, 18));
     accountPasswd.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 323));
 
     JPanel accPassPanel = new JPanel();
     accPassPanel.setBackground(new Color(255, 255, 255));
+    accPassPanel.setSize(new Dimension(700, 90));
     accPassPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0 ,50));
 
     JTextField inputAccPasswd= new JTextField(20);
-    inputAccPasswd.setFont(new Font("Arial", Font.PLAIN, 18));
-    inputAccPasswd.setBackground(Color.WHITE);
-    inputAccPasswd.setText(BankAccount.generateRandomPassword(12)); // Set default random password
-    inputAccPasswd.setEditable(false);//Make it non-editable to force random passwords
-
-    JButton generatePassBtn = new JButton("Generate");
-    generatePassBtn.addActionListener(e -> {
-      inputAccPasswd.setText(BankAccount.generateRandomPassword(12));
-    });
-
-    JPanel passGenPanel = new JPanel();
-    passGenPanel.setBackground(Color.WHITE);
-    passGenPanel.add(inputAccPasswd);
-    passGenPanel.add(generatePassBtn);
-    accPassPanel.add(passGenPanel);
+    inputAccPasswd.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+    accPassPanel.add(inputAccPasswd);
 
     JLabel accountBalance = new JLabel("Balance:");
-    accountBalance.setFont(new Font("Arial", Font.BOLD, 18));
+    accountBalance.setFont(new Font("Segoe UI", Font.BOLD, 18));
     accountBalance.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 323));
 
     JPanel accBalancePanel = new JPanel();
@@ -831,11 +828,11 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
     accBalancePanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0 ,50));
 
     JTextField inputAccBalance= new JTextField(20);
-    inputAccBalance.setFont(new Font("Arial", Font.PLAIN, 18));
+    inputAccBalance.setFont(new Font("Segoe UI", Font.PLAIN, 18));
     accBalancePanel.add(inputAccBalance);
 
     JLabel accountTypeLabel = new JLabel("Account Type:");
-    accountTypeLabel.setFont(new Font("Arial", Font.BOLD, 18));
+    accountTypeLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
     accountTypeLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 323));
 
     JPanel accTypePanel = new JPanel();
@@ -845,7 +842,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
     String[] accountTypes = {"Checking", "Investment", "Savings"};
     JComboBox<String> accountTypeComboBox = new JComboBox<>(accountTypes);
-    accountTypeComboBox.setFont(new Font("Arial", Font.PLAIN, 18));
+    accountTypeComboBox.setFont(new Font("Segoe UI", Font.PLAIN, 18));
     accTypePanel.add(accountTypeComboBox);
 
     JPanel signInPanel = new JPanel();
@@ -855,7 +852,7 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
 
     JButton createAcctBtn = new JButton("Create");
     createAcctBtn.setPreferredSize(new Dimension(100, 40));
-    createAcctBtn.setFont(new Font("Arial", Font.BOLD, 16));
+    createAcctBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
     createAcctBtn.setBackground(new Color(13, 161, 204));
     createAcctBtn.setForeground(new Color(255, 255, 255));
     createAcctBtn.addActionListener(e -> handleCreateAccount(inputAccBalance, inputAccName, inputAccPasswd, accountTypeComboBox));
@@ -908,31 +905,6 @@ AccountManager.getInstance().handleCloseAccount(panel, accountIdValue, accountNa
       JOptionPane.showMessageDialog(null, "Invalid balance format", "Error", JOptionPane.ERROR_MESSAGE);
     }
   }
-
-private JPanel createLeftPanel1(){
-  JPanel panel = new JPanel();
-  panel.setBackground(new Color(13, 161, 204));
-  panel.setPreferredSize(new Dimension(300, 600));
-
-
-  JLabel bankTitle = new JLabel("People's Bank");
-  bankTitle.setBorder(BorderFactory.createEmptyBorder(130, 0, 0, 0));
-  bankTitle.setForeground(new Color(235, 241, 238));
-  bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
-  bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-  JLabel bankSubtitle = new JLabel("Of The People, For The People");
-  bankSubtitle.setForeground(new Color(235, 241, 238));
-  bankSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-  bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 130, 0));
-
-  panel.add(bankTitle);
-  panel.add(bankSubtitle);
-
-  return panel;
-}
-
-
   private JPanel createLeftPanel(){
     JPanel panel = new JPanel();
     panel.setBackground(new Color(13, 161, 204));
@@ -941,7 +913,7 @@ private JPanel createLeftPanel1(){
     JLabel bankTitle = new JLabel("People's Bank");
     bankTitle.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
     bankTitle.setForeground(Color.WHITE);
-    bankTitle.setFont(new Font("Arial", Font.BOLD, 32));
+    bankTitle.setFont(new Font("Segoe UI", Font.BOLD, 32));
     bankTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
     JLabel bankSubtitle = new JLabel("Of The People, For The People");
@@ -950,12 +922,12 @@ private JPanel createLeftPanel1(){
     bankSubtitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
 
     // Navigation buttons
-    JButton customerListBtn = createNavButton("Customer List", "CUSTOMER LIST");
+    JButton customerListBtn = createModernNavButton("Customer List", "CUSTOMER LIST");
 
-    JButton transactionBtn = createNavButton("Transaction Process", "TRANSACTION PROCESS");
-    JButton historyBtn = createNavButton("Transaction History", "TRANSACTION HISTORY");
-    JButton addCustomerBtn = createNavButton("Add Customer", "ADD CUSTOMER");
-    JButton logoutBtn = createNavButton("Log Out", "LOG IN");
+    JButton transactionBtn = createModernNavButton("Transaction Process", "TRANSACTION PROCESS");
+    JButton historyBtn = createModernNavButton("Transaction History", "TRANSACTION HISTORY");
+    JButton addCustomerBtn = createModernNavButton("Add Customer", "ADD CUSTOMER");
+    JButton logoutBtn = createModernNavButton("Log Out", "LOG IN");
 
     // Add components to panel
     panel.add(bankTitle);
@@ -968,11 +940,36 @@ private JPanel createLeftPanel1(){
 
     return panel;
   }
-  private JButton createNavButton(String text, String panelName) {
+  private JButton createModernNavButton(String text, String panelName) {
     JButton button = new JButton(text);
     button.setPreferredSize(new Dimension(300, 60));
-    button.addActionListener(e -> mainLayout.show(main, panelName));
+    button.setBackground(new Color(13, 161, 204));
+    button.setForeground(Color.WHITE);
+    button.setFont(new Font("Segoe UI", Font.BOLD, 16));
+    button.setFocusPainted(false);
+    button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+    button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+    button.addActionListener(e -> mainLayout.show(main, panelName)); // Add functionality
+
+    // Hover effect
+    button.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        button.setBackground(new Color(0, 123, 167));
+
+      }
+
+      @Override
+      public void mouseExited(MouseEvent e) {
+        button.setBackground(new Color(13, 161, 204));
+
+      }
+    });
+
     return button;
   }
+
+
 
 }

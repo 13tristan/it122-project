@@ -2,6 +2,7 @@ package models;
 
 import exceptions.GlobalExceptionHandler;
 import exceptions.InsufficientFundsException;
+import exceptions.InvalidAccountException;
 import exceptions.InvalidAmountException;
 
 import java.util.HashSet;
@@ -93,7 +94,7 @@ public class BankAccount {
   // Deposit method
   public void deposit(double amount) throws GlobalExceptionHandler {
     if (amount <= 0) {
-      throw new InvalidAmountException("Amount must be positive");
+      throw new InvalidAccountException(accountNumber, "Account not found");
     }
 
     // Deposit amount to the balance
@@ -103,11 +104,11 @@ public class BankAccount {
   // Withdraw method
   public void withdraw(double amount) throws GlobalExceptionHandler {
     if (amount <= 0) {
-      throw new InvalidAmountException("Amount must be positive");
+      throw new InvalidAmountException(amount, "Withdrawal");
     }
 
     if (amount > balance) {
-      throw new InsufficientFundsException("Insufficient funds");
+      throw new InsufficientFundsException(accountNumber, balance, amount);
     }
 
     // Withdraw amount from balance

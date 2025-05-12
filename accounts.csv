@@ -1,4 +1,5 @@
 AccountNumber,Name,Password,Balance,AccountType,IsActive
 629916,Mercedes,Q#v&uP7POrSD,18000.0,Checking,true
-9078,Rich,w)a$OEG^hQ3X,25000.0,Investment,true
+9078,Rich,w)a$OEG^hQ3X,26200.0,Investment,true
 286368,Daniel,mrUgnOLRVmwL,46000.0,Checking,true
+500825,bold,wasdwasd,8123.0,Investment,false
